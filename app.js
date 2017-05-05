@@ -7,8 +7,10 @@ var bodyParser = require('body-parser');
 var sass = require('node-sass-middleware');
 var postcss = require('postcss-middleware');
 var autoprefixer = require('autoprefixer');
+var passport = require('passport');
 
 require('./app_api/models/db');
+require('./app_api/config/passport');
 
 var index = require('./app_server/routes/index');
 var api = require('./app_api/routes/index')
@@ -43,6 +45,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(passport.initialize());
 
 app.use('/', index);
 app.use('/api', api);
