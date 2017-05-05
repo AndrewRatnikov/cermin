@@ -11,4 +11,7 @@ router.get('/', ctrlIndex.homepage);
 router.get('/logintoadmin', ctrlAdmin.loginpage);
 router.post('/logintoadmin', ctrlAdmin.loginToPage);
 
+/* Admin part of site */
+router.get('/admin/catalog', ctrlAdmin.getCatalog);
+
 module.exports = router;
