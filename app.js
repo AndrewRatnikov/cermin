@@ -9,11 +9,13 @@ var postcss = require('postcss-middleware');
 var autoprefixer = require('autoprefixer');
 var passport = require('passport');
 
-require('./app_api/models/db');
-require('./app_api/config/passport');
+// require('./app_api/models/db');
+// require('./app_api/config/passport');
+require('./app_server/models/db');
+require('./app_server/config/passport');
 
 var index = require('./app_server/routes/index');
-var api = require('./app_api/routes/index')
+var api = require('./app_api/routes/index');
 
 var app = express();
 
