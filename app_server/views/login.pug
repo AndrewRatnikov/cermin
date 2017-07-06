@@ -1,13 +1,13 @@
 extends layout
 
 block content
-  form.login(method="post")
+  form.login(method="post", action="/logintoadmin")
     h1= title
     - if (error)
       div.alert= error 
     div
-      label(for="name") Name
-      input(type="text", name="name", id="name", required)
+      label(for="username") Name
+      input(type="text", name="username", id="username", required)
     div
       label(for="password") Password
       input(type="password", name="password", id="password", required)

@@ -11,12 +11,15 @@ module.exports.loginpage = function(req, res) {
   res.render('login', { title: 'Login' });
 };
 
-module.exports.loginToPage = function(req, res) {
-  
+module.exports.loginToPage = passport.authenticate('local.login', {
+  successRedirect: '/',
+  failureRedirect: '/logintoadmin',
+  failureFlash: false
+}); /*function(req, res) {
   if (!req.body.name || !req.body.password) {
     res.render('login', { title: 'Login', error: 'All fields required, please try again' });
   } else {
-    passport.authenticate('local', function(err, user, info) {
+    passport.authenticate('local.login', function(err, user, info) {
       console.log(err, user, info);
       if (err) {
         res.render('login', { title: 'Login', error: err });
@@ -30,7 +33,7 @@ module.exports.loginToPage = function(req, res) {
         }
       }
     });
-  }
+  }*/
 
   // Elements for API
   // var path = '/api/authentificate';
@@ -57,7 +60,6 @@ module.exports.loginToPage = function(req, res) {
   //     }
   //   });
   // }
-};
 
 module.exports.getCatalog = function(req, res) {
   res.render('catalog', { title: "Catalog" });
