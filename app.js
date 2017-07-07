@@ -7,62 +7,45 @@ var bodyParser = require('body-parser');
 var sass = require('node-sass-middleware');
 var postcss = require('postcss-middleware');
 var autoprefixer = require('autoprefixer');
-var passport = require('passport');
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
-var mongoose = require('mongoose');
 
-// require('./app_api/models/db');
-// require('./app_api/config/passport');
-require('./app_server/models/db');
-require('./app_server/config/passport');
-
-var index = require('./app_server/routes/index');
-var api = require('./app_api/routes/index');
+var index = require('./routes/index');
+var users = require('./routes/users');
 
 var app = express();
 
-//  style engine setup
+// view style engine
 app.use(sass({
-  src: path.join(__dirname, '/app_server/sass'),
+  src: path.join(__dirname, '/public/sass'),
   dest: path.join(__dirname, '/public/stylesheets'),
   debug: true,
+  response: false,
   outputStyle: 'compressed',
   prefix: '/stylesheets'
 }));
-app.use('/stylesheets', postcss({
+app.use(postcss({
   plugins: [
     autoprefixer({ browsers: ['> 1%', 'IE 7'], cascade: false })
   ],
   src: function(req) {
-    return path.join(__dirname, 'public', 'stylesheets', req.path);
+    console.log(req.path);
+    return path.join(__dirname, 'public', req.path);
   }
 }));
 
 // view engine setup
-app.set('views', path.join(__dirname, 'app_server/views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({
-  secret: 'Some secret key',
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie: { maxAge: 180 * 60 * 1000 }
-}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use('/', index);
-// app.use('/api', api);
+app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
