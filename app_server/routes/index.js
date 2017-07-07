@@ -4,8 +4,13 @@ var router = express.Router();
 var ctrlIndex = require('../controllers/index');
 var ctrlAdmin = require('../controllers/login');
 
+function isLogedIn(req, res, next) {
+  console.log(req.isAuthenticated());
+  next();
+};
+
 /* GET home page. */
-router.get('/', ctrlIndex.homepage);
+router.get('/',isLogedIn, ctrlIndex.homepage);
 
 /* login to admin */
 router.get('/logintoadmin', ctrlAdmin.loginpage);

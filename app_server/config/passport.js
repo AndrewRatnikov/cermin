@@ -5,7 +5,8 @@ var User = mongoose.model('User');
 
 passport.use('local.login', new LocalStrategy(/*{
   usernameField: 'name',
-  passwordField: 'password'
+  passwordField: 'password',
+  passReqToCallback: true
 }, */function( username, password, done ) {
   console.log(username, password);
   User.findOne({ name: username }, function(err, user) {
@@ -21,3 +22,11 @@ passport.use('local.login', new LocalStrategy(/*{
     return done(null, user);
   });
 }));
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});

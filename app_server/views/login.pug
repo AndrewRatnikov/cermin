@@ -3,8 +3,8 @@ extends layout
 block content
   form.login(method="post", action="/logintoadmin")
     h1= title
-    - if (error)
-      div.alert= error 
+    - if (message)
+      div.alert= message 
     div
       label(for="username") Name
       input(type="text", name="username", id="username", required)

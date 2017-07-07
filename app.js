@@ -8,6 +8,9 @@ var sass = require('node-sass-middleware');
 var postcss = require('postcss-middleware');
 var autoprefixer = require('autoprefixer');
 var passport = require('passport');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var mongoose = require('mongoose');
 
 // require('./app_api/models/db');
 // require('./app_api/config/passport');
@@ -46,9 +49,17 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({
+  secret: 'Some secret key',
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  cookie: { maxAge: 180 * 60 * 1000 }
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', index);
 // app.use('/api', api);
