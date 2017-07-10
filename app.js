@@ -8,6 +8,10 @@ const sass = require('node-sass-middleware');
 const postcss = require('postcss-middleware');
 const autoprefixer = require('autoprefixer');
 const mongoose = require('mongoose');
+const flash = require('connect-flash');
+const passport = require('passport');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 const index = require('./routes/index');
 const admin = require('./routes/admin');
@@ -16,6 +20,8 @@ const app = express();
 
 // connect db
 require('./model/db');
+// connect strategy
+require('./config/passport');
 
 // view style engine
 app.use(sass({
@@ -45,6 +51,15 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use( session({
+  secret: 'Something wrong',
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
+}) );
+app.use( flash() );
+app.use( passport.initialize() );
+app.use( passport.session() );
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);

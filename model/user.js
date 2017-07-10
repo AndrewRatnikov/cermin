@@ -4,17 +4,18 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   email: { type: String, required: true },
+  name: String,
   hash: { type: String, required: true },
   salt: { type: String, required: true }
 });
 
-userShema.methods.setPassword = function(password) {
+userSchema.methods.setPassword = function(password) {
   this.salt = crypto.randomBytes(16).toString('hex');
-  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  this.hash = crypto.pbkdf2Sync(new Buffer(password, 'binary'), this.salt, 1000, 64, 'sha256').toString('hex');
 };
 
-userShema.methods.validPassword = function(password) {
-  var hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+userSchema.methods.validPassword = function(password) {
+  var hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha256').toString('hex');
   return this.hash === hash;
 };
 
