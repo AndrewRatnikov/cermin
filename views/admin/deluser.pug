@@ -1,16 +1,15 @@
 extends ../layout
 
 block content
-  form#login.login-form(method="post")
+  form#delete-user.login-form(method="post")
     h2= title
     if (hasErr)
       .error-alert= error
+    if (hasSuccess)
+      .success-alert= success
     .input-wrap
       label(for="email") Email: 
       input(type="email", name="email", id="email" required)
-    .input-wrap
-      label(for="password") Password: 
-      input(type="password", name="password", id="password" required)
     button.btn(type="submit") Submit
     
     

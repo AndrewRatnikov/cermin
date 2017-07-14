@@ -15,6 +15,12 @@ router.post('/register', ctrlAdmin.registerNewUser, function( req, res, next ) {
   res.redirect('/');
 });
 
+router.get('/logout', ctrlAdmin.logout);
+
+router.get('/deluser', ctrlAdmin.getDelPage);
+
+router.post('/deluser', ctrlAdmin.deleteUser);
+
 router.get('/', function( req, res, next ) {
   res.redirect('/');
 });

@@ -1,3 +1,4 @@
 module.exports.getIndexPage = function ( req, res, next ) {
-  res.render('index', { title: 'Express', name: req.user.email });
+  const email = req.user ? req.user.email : 'Noname';
+  res.render('index', { title: 'Express', name: email, isLogged: req.isAuthenticated() });
 };

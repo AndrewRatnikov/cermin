@@ -4,4 +4,15 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
+    
+    if (isLogged)
+      p.logout
+        a(href="/admin/deluser") Delete user
+        a(href="/admin/logout") Logout
+    else
+      p.logout
+        a(href="/admin/register") Register
+        a(href="/admin/login") Login
+        
+    
     block content
