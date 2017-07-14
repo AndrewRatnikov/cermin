@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  form#register.login-form(method="post")
+    h2= title
+    if (hasErr)
+      .error-alert= error
+    .input-wrap
+      label(for="email") Email: 
+      input(type="email", name="email", id="email" required)
+    .input-wrap
+      label(for="password") Password: 
+      input(type="password", name="password", id="password" required)
+    button.btn(type="submit") Submit
+    
+    

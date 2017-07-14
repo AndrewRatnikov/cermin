@@ -6,7 +6,7 @@ passport.use('local.register', new LocalStrategy( {
   usernameField: 'email',
   passwordField: 'password',
   passReqToCallBack: true
-}, function( email, password, done) {
+}, function( email, password, done ) {
 
   if (!email || !password) return done( null, false, {message: 'All fields are required'} );
 
@@ -39,3 +39,24 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
+
+passport.use('local.login', new LocalStrategy( {
+  usernameField: 'email',
+  passwordField: 'password',
+  passReqToCallBack: true
+}, function( email, password, done ) {
+
+  if (!email || !password) return done( null, false, {message: 'All fields are required'} );
+
+  User.findOne({ 'email': email }, function(err, user) {
+    if (err) {
+      return done(err);
+    }
+    if (user) {
+      return done(null, user);
+    } else {
+      return done(null, false, {message: 'Email does not exist'} );
+    }
+  });
+
+} ));
