@@ -2,3 +2,10 @@ extends ../layout
 
 block content
   h3= title
+  img(src=urlAvatar)
+  p= email
+  if (hasErr)
+    p.error-alert= error
+  form(action="/admin/profile/" + id + "/uploadavatar", method="post", enctype="multipart/form-data")
+    input(type="file", name="uploadAvatar")
+    input(type="submit", value="submit")
