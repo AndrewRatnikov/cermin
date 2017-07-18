@@ -23,24 +23,6 @@ require('./model/db');
 // connect strategy
 require('./config/passport');
 
-// view style engine
-app.use(sass({
-  src: path.join(__dirname, '/public/sass'),
-  dest: path.join(__dirname, '/public/stylesheets'),
-  debug: true,
-  response: false,
-  outputStyle: 'compressed',
-  prefix: '/stylesheets'
-}));
-app.use(postcss({
-  plugins: [
-    autoprefixer({ browsers: ['> 1%', 'IE 7'], cascade: false })
-  ],
-  src: function(req) {
-    return path.join(__dirname, 'public', req.path);
-  }
-}));
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -61,6 +43,24 @@ app.use( flash() );
 app.use( passport.initialize() );
 app.use( passport.session() );
 app.use(express.static(path.join(__dirname, 'public')));
+
+// view style engine
+app.use(sass({
+  src: path.join(__dirname, '/public/sass'),
+  dest: path.join(__dirname, '/public/stylesheets'),
+  debug: true,
+  response: false,
+  outputStyle: 'compressed',
+  prefix: '/stylesheets'
+}));
+app.use(postcss({
+  plugins: [
+    autoprefixer({ browsers: ['> 1%', 'IE 7'], cascade: false })
+  ],
+  src: function(req) {
+    return path.join(__dirname, 'public', req.path);
+  }
+}));
 
 app.use('/', index);
 app.use('/admin', admin);

@@ -7,6 +7,7 @@ html
     
     if (isLogged)
       p.logout
+        a(href="/admin/profile/" + id) Profile
         a(href="/admin/deluser") Delete user
         a(href="/admin/logout") Logout
     else

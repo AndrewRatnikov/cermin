@@ -92,7 +92,7 @@ module.exports.uploadAvatar = function( req, res, next ) {
   const id = req.params.id;
   fs.readFile(req.files.uploadAvatar.path, function(err, data) {
     var name = req.files.uploadAvatar.originalFilename
-    var newPath = process.cwd() + "/uploads/" + name;
+    var newPath = process.cwd() + "/public/uploads/" + name;
     fs.writeFile(newPath, data, function(err) {
       if (err) {
         req.flash('error', 'Upload error');
@@ -109,5 +109,4 @@ module.exports.uploadAvatar = function( req, res, next ) {
       );
     });
   });
-  //res.redirect(`/admin/profile/${id}/`);
 };
