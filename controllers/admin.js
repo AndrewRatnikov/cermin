@@ -91,14 +91,24 @@ module.exports.getUserPage = function( req, res, next ) {
 module.exports.uploadAvatar = function( req, res, next ) {
   const id = req.params.id;
   fs.readFile(req.files.uploadAvatar.path, function(err, data) {
-    var name = req.files.uploadAvatar.originalFilename
-    var newPath = process.cwd() + "/public/uploads/" + name;
+    const name = req.files.uploadAvatar.originalFilename
+    const newPath = process.cwd() + "/public/uploads/" + name;
     fs.writeFile(newPath, data, function(err) {
       if (err) {
         req.flash('error', 'Upload error');
         return res.redirect('back');
       }
-      User.findOneAndUpdate(
+      User.findOne( {'_id': id}, function( err, user ) {
+        if (err) {
+          req.flash('error', 'User do not exist');
+          res.redirect('back');
+        } else {
+          var oldPath = process.cwd() + "/public/" + user.urlAvatar;
+          fs.unlink(oldPath);
+          console.log(user.urlAvatar);
+        }
+      } );
+      User.update(
         { '_id': id },
         { $set:{ urlAvatar: "/uploads/" + name } },
         { new: true },
