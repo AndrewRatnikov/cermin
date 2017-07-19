@@ -9,3 +9,13 @@ block content
   form(action="/admin/profile/" + id + "/uploadavatar", method="post", enctype="multipart/form-data")
     input(type="file", name="uploadAvatar")
     input(type="submit", value="submit")
+  hr
+  form(method="post", enctype="multipart/form-data")
+    h5 Add Post
+    input(type="file", name="uploadPostPreview")
+    br
+    input(type="text", name="title", required, placeholder="Title")
+    br
+    textarea(required, name="text" placeholder="Post text")
+    br
+    input(type="submit", value="Add")

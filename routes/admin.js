@@ -27,6 +27,8 @@ router.post('/deluser', ctrlAdmin.isLogged, ctrlAdmin.deleteUser);
 
 router.get('/profile/:id', ctrlAdmin.isLogged, ctrlAdmin.getUserPage);
 
+router.post('/profile/:id', ctrlAdmin.isLogged, multipartMiddleware, ctrlAdmin.addPost);
+
 router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware, ctrlAdmin.uploadAvatar);
 
 router.get('/', function( req, res, next ) {
