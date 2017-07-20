@@ -3,3 +3,11 @@ extends layout
 block content
   h1= title
   p Welcome to #{title} #{name}
+  hr
+  div.posts
+    each post in posts
+      h3= post.title
+      img(src=post.photoUrl)
+      p= post.description
+      p= post.label
+      

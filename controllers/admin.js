@@ -2,12 +2,13 @@ const fs = require('fs');
 const passport = require('passport');
 
 const User = require('../model/user');
+const Post = require('../model/blogpost');
 
-const registerPage = (res, err) => {
+const registerPage = (req, res, err) => {
   res.render('admin/register', { title: 'Registration', error: err, hasErr: !!err, isLogged: req.isAuthenticated() });
 }
 
-const delUser = (res, err, success) => {
+const delUser = (req, res, err, success) => {
   res.render('admin/deluser', { title: 'Delete user', error: err, hasErr: !!err, success: success, hasSuccess: !!success, isLogged: req.isAuthenticated() });
 };
 
@@ -21,7 +22,7 @@ module.exports.isLogged = ( req, res, next ) => {
 
 module.exports.getRegisterPage = function( req, res, next ) {
   let err = req.flash('error');
-  registerPage( res, err );
+  registerPage( req, res, err );
   //res.render('admin/register', { title: 'Registration', error: err, hasErr: !!err });
 };
 
@@ -58,7 +59,7 @@ module.exports.logout = function( req, res, next ) {
 };
 
 module.exports.getDelPage = function ( req, res, next ) {
-  delUser(res, null);
+  delUser(req, res, null);
 };
 
 module.exports.deleteUser = function ( req, res, next ) {
@@ -102,23 +103,18 @@ module.exports.addPost = function( req, res, next ) {
         req.flash('error', 'Upload error');
         return res.redirect('back');
       }
-      User.findById(id).select('comments').exec(function( err, user ) {
+      const post = new Post();
+      post.title = req.body.title;
+      post.label = req.body.label;
+      post.description = req.body.text;
+      post.photoUrl = "/uploads/" + name;
+      post.author = id;
+      post.save(function(err, post) {
         if (err) {
-          req.flash('error', 'Not found');
+          req.flash('error', err);
           return res.redirect('back');
         }
-        user.comments.push({
-          url: "/uploads/" + name,
-          title: req.body.title,
-          text: req.body.text
-        });
-        user.save(function(err, user) {
-          if (err) {
-            req.flash('error', err);
-            return res.redirect('back');
-          }
-          res.redirect('back');
-        });
+        res.redirect('back');
       });
     });
   });
