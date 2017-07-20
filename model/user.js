@@ -2,20 +2,12 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema({
-  url: String,
-  title: { type: String, required: true },
-  text: { type: String, required: true },
-  createdOn: { type: Date, 'default': Date.now() }
-});
-
 const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   name: String,
   urlAvatar: String,
   hash: { type: String, required: true },
-  salt: { type: String, required: true },
-  comments: [ PostSchema ]
+  salt: { type: String, required: true }
 });
 
 userSchema.methods.setPassword = function(password) {

@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
   photoUrl: String,
   title: { type: String, required: true },
-  descriptiond: String
+  description: { type: String, required: true },
+  author: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Post', postSchema);

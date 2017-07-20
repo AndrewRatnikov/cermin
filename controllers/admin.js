@@ -134,24 +134,23 @@ module.exports.uploadAvatar = function( req, res, next ) {
         req.flash('error', 'Upload error');
         return res.redirect('back');
       }
-      User.findOne( {'_id': id}, function( err, user ) {
+      User.findById(id).select('urlAvatar').exec(function( err, user ) {
         if (err) {
           req.flash('error', 'User do not exist');
           res.redirect('back');
         } else {
           var oldPath = process.cwd() + "/public/" + user.urlAvatar;
           fs.unlink(oldPath);
+          user.urlAvatar = "/uploads/" + name;
+          user.save(function(err, user) {
+            if (err) {
+              req.flash('error', err);
+              return res.redirect('back');
+            }
+            res.redirect('back');
+          });
         }
       } );
-      User.update(
-        { '_id': id },
-        { $set:{ urlAvatar: "/uploads/" + name } },
-        { new: true },
-        function(err, doc) {
-          if (err) req.flash('error', 'Db error(upload files)');
-          res.redirect('back');
-        }
-      );
     });
   });
 };
