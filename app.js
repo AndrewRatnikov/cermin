@@ -42,7 +42,6 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // view style engine
 app.use(sass({
@@ -54,14 +53,16 @@ app.use(sass({
     prefix: '/stylesheets'
 }));
 // add css prefix
-app.use(postcss({
+app.use(/\.css$/, postcss({
     plugins: [
         autoprefixer({browsers: ['> 1%', 'IE 7'], cascade: false})
     ],
     src: function (req) {
+        console.log(req);
         return path.join(__dirname, 'public', req.path);
     }
 }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // routes
 app.use('/', index);
