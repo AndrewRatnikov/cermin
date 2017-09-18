@@ -133,27 +133,22 @@ const savePost = (req, res, url) => {
 };
 
 module.exports.addPost = function (req, res, next) {
-    if (!req.files) {
-        errHandler(req, res, 'No files were uploaded.');
-    }
+    if (!req.files) return errHandler(req, res, 'No files were uploaded.');
     const file = req.files.uploadPostPreview;
     if (file.path) {
+        if (!file.type.match(/^image/)) return errHandler(req, res, 'Files must be images.');
         writePostImg(file)
-            .then(results => {
-                savePost(req, res, results);
-            })
-            .catch(err => {
-                req.flash('error', err);
-                return res.redirect('back');
-            });
+            .then( results => savePost(req, res, results) )
+            .catch( err => errHandler(req, res, err) );
     } else {
-        Promise.all(file.map(writePostImg))
-            .then(results => {
-                savePost(req, res, results);
-            })
-            .catch(err => {
-                errHandler(req, res, err);
-            });
+        let isImages = true;
+        file.forEach(f => {
+            if (!f.type.match(/^image/)) isImages = false;
+        });
+        if (!isImages) return errHandler(req, res, 'Files must be images.');
+        Promise.all( file.map(writePostImg) )
+            .then( results => savePost(req, res, results) )
+            .catch( err => errHandler(req, res, err) );
     }
 };
 
