@@ -6,7 +6,8 @@ const postSchema = new Schema({
     title: {type: String, required: true},
     description: {type: String, required: true},
     author: {type: String, required: true},
-    label: String
+    label: String,
+    date: Date
 });
 
 module.exports = mongoose.model('Post', postSchema);

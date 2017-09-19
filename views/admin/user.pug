@@ -25,10 +25,13 @@ block content
                 input(type="submit", value="Add")
             each post in posts
                 hr
-                form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
+                div
                     h3= post.title
                     each imgUrl in post.photoUrl
-                        img(src=imgUrl)
+                        .img-wrap
+                            img(src=imgUrl)
+                    p Added #{post.date}
                     p= post.description
                     p= post.label
-                    button(type="submit") Delete post
+                    form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
+                        button(type="submit") Delete post

@@ -89,6 +89,17 @@ module.exports.getUserPage = function (req, res, next) {
                     req.flash('error', err);
                     res.redirect('/admin/login');
                 } else {
+                    posts = posts.map((post) => {
+                        const date = `${post.date.getDate()}.${post.date.getMonth()}.${post.date.getFullYear()}`;
+                        return {
+                            photoUrl: post.photoUrl,
+                            title: post.title,
+                            description: post.description,
+                            author: post.author,
+                            label: post.label,
+                            date: date
+                        };
+                    });
                     res.render('admin/user', {
                         posts: posts.reverse(),
                         title: 'Profile',
@@ -141,10 +152,10 @@ const savePost = (req, res, url) => {
     post.description = req.body.text;
     post.photoUrl = url;
     post.author = req.params.id;
+    post.date = new Date();
     post.save(function (err, post) {
-        if (err) {
-            errHandler(req, res, err);
-        }
+        if (err) errHandler(req, res, err);
+        console.log(post);
         res.redirect('back');
     });
 };
@@ -176,7 +187,10 @@ module.exports.delPost = function (req, res, next) {
         if (doc) {
             doc.photoUrl.forEach( url => {
                 const urlPath = `${process.cwd()}/public/${url}`;
-                fs.unlink(urlPath);
+                fs.open(urlPath, 'r', (err, fd) => {
+                    if (err) return;
+                    fs.unlink(urlPath);
+                });
             });
         }
         return res.redirect('back');
