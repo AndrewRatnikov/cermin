@@ -34,3 +34,16 @@
 img {
   height: 200px;
 }
+
+.flex {
+  display: flex;
+}
+
+.col {
+  &:first-child {
+    flex-basis: 400px;
+  }
+  &:last-child {
+    flex-grow: 1;
+  }
+}

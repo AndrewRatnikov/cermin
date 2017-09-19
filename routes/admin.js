@@ -27,6 +27,8 @@ router.post('/deluser', ctrlAdmin.isLogged, ctrlAdmin.deleteUser);
 router.get('/profile/:id', ctrlAdmin.isLogged, ctrlAdmin.getUserPage);
 // get new post
 router.post('/profile/:id', ctrlAdmin.isLogged, multipartMiddleware, ctrlAdmin.addPost);
+// delete post
+router.post('/profile/:id/delpost/:postid', ctrlAdmin.isLogged, ctrlAdmin.delPost);
 // upload user avatar
 router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware, ctrlAdmin.uploadAvatar);
 

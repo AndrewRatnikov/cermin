@@ -1,4 +1,5 @@
 const fs = require('fs');
+const crypto = require('crypto');
 const passport = require('passport');
 
 const User = require('../model/user');
@@ -83,22 +84,38 @@ module.exports.getUserPage = function (req, res, next) {
             req.flash('error', err);
             res.redirect('/admin/login');
         } else {
-            res.render('admin/user', {
-                title: 'Profile',
-                email: user.email,
-                id: user._id,
-                error: error,
-                hasErr: !!error,
-                urlAvatar: user.urlAvatar,
-                isLogged: req.isAuthenticated()
+            Post.find({}, function(err, posts) {
+                if (err) {
+                    req.flash('error', err);
+                    res.redirect('/admin/login');
+                } else {
+                    res.render('admin/user', {
+                        posts: posts.reverse(),
+                        title: 'Profile',
+                        email: user.email,
+                        id: user._id,
+                        error: error,
+                        hasErr: !!error,
+                        urlAvatar: user.urlAvatar,
+                        isLogged: req.isAuthenticated()
+                    });
+                }
             });
         }
     });
 };
 
+const createHash = (name) => {
+    const fileExtension = name.slice( name.lastIndexOf('.') );
+    const fileName = name.slice(0, fileExtension.length - 1);
+    const date = Date.now().toString();
+    const hash = crypto.createHash('sha1').update(date).digest('hex');
+    return `${fileName}.${hash}${fileExtension}`;
+};
+
 const writePostImg = (file) => new Promise(function (resolve, reject) {
-    let name = file.originalFilename;
-    let newPath = process.cwd() + "/public/uploads/" + name;
+    const name = createHash(file.originalFilename);
+    const newPath = process.cwd() + "/public/uploads/" + name;
     fs.readFile(file.path, (err, data) => {
         if (err) {
             reject('Can not read file');
@@ -152,29 +169,36 @@ module.exports.addPost = function (req, res, next) {
     }
 };
 
+module.exports.delPost = function (req, res, next) {
+    const postId = req.params.postid;
+    Post.findOneAndRemove({ '_id': postId }, function(err, doc, post) {
+        if (err) return errHandler(req, res, err);
+        if (doc) {
+            doc.photoUrl.forEach( url => {
+                const urlPath = `${process.cwd()}/public/${url}`;
+                fs.unlink(urlPath);
+            });
+        }
+        return res.redirect('back');
+    });
+};
+
 module.exports.uploadAvatar = function (req, res, next) {
     const id = req.params.id;
     fs.readFile(req.files.uploadAvatar.path, function (err, data) {
-        const name = req.files.uploadAvatar.originalFilename;
+        const name = createHash(req.files.uploadAvatar.originalFilename);
         const newPath = process.cwd() + "/public/uploads/" + name;
         fs.writeFile(newPath, data, function (err) {
-            if (err) {
-                req.flash('error', 'Upload error');
-                return res.redirect('back');
-            }
+            if (err)  return errHandler(req, res, err);
             User.findById(id).select('urlAvatar').exec(function (err, user) {
                 if (err) {
-                    req.flash('error', 'User do not exist');
-                    res.redirect('back');
+                    return errHandler(req, res, err);
                 } else {
-                    var oldPath = process.cwd() + "/public/" + user.urlAvatar;
+                    const oldPath = process.cwd() + "/public/" + user.urlAvatar;
                     fs.unlink(oldPath);
                     user.urlAvatar = "/uploads/" + name;
                     user.save(function (err, user) {
-                        if (err) {
-                            req.flash('error', err);
-                            return res.redirect('back');
-                        }
+                        if (err) return errHandler(req, res, err);
                         res.redirect('back');
                     });
                 }
