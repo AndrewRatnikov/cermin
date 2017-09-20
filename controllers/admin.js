@@ -53,7 +53,7 @@ module.exports.registerNewUser = function (req, res, next) {
 
 module.exports.getLoginPage = function (req, res, next) {
     let err = req.flash('error');
-    res.render('admin/login', {title: 'Login', error: err, hasErr: !!err, isLogged: req.isAuthenticated()});
+    res.render('admin/login', {title: 'Login', error: err, hasErr: !!err.length, isLogged: req.isAuthenticated()});
 };
 
 module.exports.loginUser = passport.authenticate('local.login', {
@@ -105,8 +105,9 @@ module.exports.getUserPage = function (req, res, next) {
                         title: 'Profile',
                         email: user.email,
                         id: user._id,
+                        name: user.name,
                         error: error,
-                        hasErr: !!error,
+                        hasErr: !!error.length,
                         urlAvatar: user.urlAvatar,
                         isLogged: req.isAuthenticated()
                     });

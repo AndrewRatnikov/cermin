@@ -1,17 +1,27 @@
 extends ../layout
 
 block content
-    .flex
-        .col
-            h3= title
-            img(src=urlAvatar)
-            p= email
-            if (hasErr)
-                p.error-alert= error
-            form(action="/admin/profile/" + id + "/uploadavatar", method="post", enctype="multipart/form-data")
-                input(type="file", name="uploadAvatar")
-                input(type="submit", value="submit")
-        .col
+    .row
+        .col-md-3
+            .thumbnail
+                h1.text-center= title
+                img.img-rounded.avatar(src=urlAvatar, alt="Avatar")
+                .caption
+                    h3= name
+                    p Email: #{email}
+                    .row.margin-bottom-10
+                        .col-sm-12
+                            button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#change-avatar") Change avatar
+                    .row.margin-bottom-10
+                        .col-sm-12
+                            button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#alert-modal") Change personal data
+                    .row.margin-bottom-10
+                        .col-sm-12
+                            button.btn.btn-danger(type="button", data-toggle="modal", data-target="#alert-modal") Alert
+                    //form(action="/admin/profile/" + id + "/uploadavatar", method="post", enctype="multipart/form-data")
+                    //    input(type="file", name="uploadAvatar")
+                    //    input(type="submit", value="submit")
+        .col-md-9
             form(method="post", enctype="multipart/form-data")
                 h5 Add Post
                 input(type="file", name="uploadPostPreview", required, multiple="multiple")
@@ -35,3 +45,29 @@ block content
                     p= post.label
                     form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
                         button(type="submit") Delete post
+    #alert-modal.modal.fade(tabindex="-1", role="dialog")
+        .modal-dialog(role="document")
+            .modal-content.alert.alert-danger
+                .modal-body
+                    .row
+                        button.close(type="button", data-dismiss="modal", aria-label="Close")
+                            span(aria-hidden="true") &times;
+                    .row
+                        p Some text
+    #change-avatar.modal.fade(tabindex="-1", role = "dialog")
+        .modal-dialog(role="document")
+            form.modal-content(action="/admin/profile/" + id + "/uploadavatar", method="post", enctype="multipart/form-data")
+                .modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h2 Change avatar
+                .modal-body
+                    if (hasErr)
+                        p.alert.alert-danger= error
+                    .input-group
+                        label.input-group-btn.upload-avatar
+                            label.btn.btn-primary(for="upload-avatar") Browse
+                            input#upload-avatar(type="file", name="uploadAvatar")
+                        input.form-control(type="text", readonly)
+                .modal-footer
+                    button.btn.btn-success(type="submit") Submit
