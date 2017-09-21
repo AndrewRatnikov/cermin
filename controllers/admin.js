@@ -198,23 +198,29 @@ module.exports.delPost = function (req, res, next) {
     });
 };
 
+const jsonResponse = (res, code, response) => {
+    res.status(code).json(response);
+};
+
 module.exports.uploadAvatar = function (req, res, next) {
     const id = req.params.id;
+    if (Object.keys(req.files).length === 0) return jsonResponse(res, 404, { error: 'No files were upload.' });
+    if (!req.files.uploadAvatar.type.match(/^image/)) return jsonResponse(res, 404, { error: 'Files must be images.' });
     fs.readFile(req.files.uploadAvatar.path, function (err, data) {
         const name = createHash(req.files.uploadAvatar.originalFilename);
         const newPath = process.cwd() + "/public/uploads/" + name;
         fs.writeFile(newPath, data, function (err) {
-            if (err)  return errHandler(req, res, err);
+            if (err)  return jsonResponse(res, 404, err);
             User.findById(id).select('urlAvatar').exec(function (err, user) {
                 if (err) {
-                    return errHandler(req, res, err);
+                    return jsonResponse(res, 404, err);
                 } else {
                     const oldPath = process.cwd() + "/public/" + user.urlAvatar;
                     fs.unlink(oldPath);
                     user.urlAvatar = "/uploads/" + name;
                     user.save(function (err, user) {
-                        if (err) return errHandler(req, res, err);
-                        res.redirect('back');
+                        if (err) return jsonResponse(res, 404, err);
+                        jsonResponse(res, 201, { success: true });
                     });
                 }
             });
