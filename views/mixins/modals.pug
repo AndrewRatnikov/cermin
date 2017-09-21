@@ -1,0 +1,37 @@
+mixin changeAvatar
+    #change-avatar.modal.fade(tabindex="-1", role = "dialog")
+        .modal-dialog(role="document")
+            form.modal-content(action="/admin/profile/" + id + "/uploadavatar", method="post", enctype="multipart/form-data")
+                .modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h2 Change avatar
+                .modal-body
+                    .input-group
+                        label.input-group-btn.upload-avatar
+                            label.btn.btn-primary(for="upload-avatar") Browse
+                            input#upload-avatar(type="file", name="uploadAvatar")
+                        input.form-control(type="text", readonly)
+                .modal-footer
+                    button.btn.btn-success(type="submit") Submit
+
+mixin changePersonalData
+    #change-personal-data.modal.fade(tabindex="-1", role = "dialog")
+        .modal-dialog(role="document")
+            // TODO: Add url to action
+            form.modal-content(action="#", method="post")
+                .modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h2 Change personal data
+                .modal-body.form-horizontal
+                    .form-group
+                        label.col-sm-2.control-label(for="name") Name
+                        .col-sm-10
+                            input#name.form-control(type="text", name="name", value=name)
+                    .form-group
+                        label.col-sm-2.control-label(for="email") Email
+                        .col-sm-10
+                            input#email.form-control(type="email", name="email", value=email)
+                .modal-footer
+                    button.btn.btn-success(type="submit") Submit

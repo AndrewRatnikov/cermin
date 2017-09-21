@@ -4,6 +4,7 @@ const multipart = require('connect-multiparty');
 const multipartMiddleware = multipart();
 
 const ctrlAdmin = require('../controllers/admin');
+const ctrlProfile = require('../controllers/profile');
 
 router.get('/login', ctrlAdmin.getLoginPage);
 
@@ -24,13 +25,13 @@ router.get('/deluser', ctrlAdmin.isLogged, ctrlAdmin.getDelPage);
 // delete user
 router.post('/deluser', ctrlAdmin.isLogged, ctrlAdmin.deleteUser);
 // go to profile page
-router.get('/profile/:id', ctrlAdmin.isLogged, ctrlAdmin.getUserPage);
+router.get('/profile/:id', ctrlAdmin.isLogged, ctrlProfile.getUserPage);
 // get new post
-router.post('/profile/:id', ctrlAdmin.isLogged, multipartMiddleware, ctrlAdmin.addPost);
+router.post('/profile/:id', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.addPost);
 // delete post
-router.post('/profile/:id/delpost/:postid', ctrlAdmin.isLogged, ctrlAdmin.delPost);
+router.post('/profile/:id/delpost/:postid', ctrlAdmin.isLogged, ctrlProfile.delPost);
 // upload user avatar
-router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware, ctrlAdmin.uploadAvatar);
+router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.uploadAvatar);
 
 router.get('/', function (req, res, next) {
     res.redirect('/');

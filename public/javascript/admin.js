@@ -1,6 +1,6 @@
 $(function() {
 
-    var uploadAvatar = {
+    const uploadAvatar = {
         init: function() {
             this.cacheDom();
             this.bindEvents();
@@ -21,7 +21,7 @@ $(function() {
         },
         setValueToInput: function (event) {
             this.$changeAvatarForm.find('.alert').remove();
-            var filename = this.$uploadAvatarInput.prop('files')[0].name;
+            const filename = this.$uploadAvatarInput.prop('files')[0].name;
             this.$changeAvatarForm.find('[type="text"]').val(filename);
         },
         clearInputValue: function (event) {
@@ -30,15 +30,15 @@ $(function() {
         },
         sendNewAvatar: function (event) {
             event.preventDefault();
-            var url = this.$changeAvatarForm.attr('action');
-            var files = this.$uploadAvatarInput.prop('files');
-            var modalBody = this.$changeAvatarForm.find('.modal-body');
+            const url = this.$changeAvatarForm.attr('action');
+            const files = this.$uploadAvatarInput.prop('files');
+            const modalBody = this.$changeAvatarForm.find('.modal-body');
             if (!files.length) {
-                var err = '<p class="alert alert-danger">No files were upload</p>';
+                const err = '<p class="alert alert-danger">No files were upload</p>';
                 modalBody.prepend(err);
                 return;
             }
-            var formData = new FormData();
+            const formData = new FormData();
             $.each(files, function(key, value) {
                 formData.append('uploadAvatar', value);
             });
@@ -54,8 +54,8 @@ $(function() {
                     document.location.reload(true);
                 },
                 error: function (jqxhr) {
-                    var error = JSON.parse(jqxhr.responseText).error;
-                    var err = '<p class="alert alert-danger">' + error + '</p>';
+                    const error = JSON.parse(jqxhr.responseText).error;
+                    const err = '<p class="alert alert-danger">' + error + '</p>';
                     modalBody.prepend(err);
                 }
             });

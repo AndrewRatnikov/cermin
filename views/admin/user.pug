@@ -1,11 +1,14 @@
 extends ../layout
 
+include ../mixins/modals
+
 block content
     .row
         .col-md-3
             .thumbnail
                 h1.text-center= title
-                img.img-rounded.avatar(src=urlAvatar, alt="Avatar")
+                if urlAvatar
+                    img.img-rounded.avatar(src=urlAvatar, alt="Avatar")
                 .caption
                     h3= name
                     p Email: #{email}
@@ -14,7 +17,7 @@ block content
                             button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#change-avatar") Change avatar
                     .row.margin-bottom-10
                         .col-sm-12
-                            button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#alert-modal") Change personal data
+                            button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#change-personal-data") Change personal data
                     .row.margin-bottom-10
                         .col-sm-12
                             button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#alert-modal") Change password
@@ -55,18 +58,5 @@ block content
                     .row
                         h2 Error
                         p Error
-    #change-avatar.modal.fade(tabindex="-1", role = "dialog")
-        .modal-dialog(role="document")
-            form.modal-content(action="/admin/profile/" + id + "/uploadavatar", method="post", enctype="multipart/form-data")
-                .modal-header
-                    button.close(type="button", data-dismiss="modal", aria-label="Close")
-                        span(aria-hidden="true") &times;
-                    h2 Change avatar
-                .modal-body
-                    .input-group
-                        label.input-group-btn.upload-avatar
-                            label.btn.btn-primary(for="upload-avatar") Browse
-                            input#upload-avatar(type="file", name="uploadAvatar")
-                        input.form-control(type="text", readonly)
-                .modal-footer
-                    button.btn.btn-success(type="submit") Submit
+    +changeAvatar
+    +changePersonalData(name, email)
