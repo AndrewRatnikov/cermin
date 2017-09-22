@@ -18,8 +18,7 @@ mixin changeAvatar
 mixin changePersonalData
     #change-personal-data.modal.fade(tabindex="-1", role = "dialog")
         .modal-dialog(role="document")
-            // TODO: Add url to action
-            form.modal-content(action="#", method="post")
+            form.modal-content(action="/admin/profile/" + id + "/changeInfo", method="post")
                 .modal-header
                     button.close(type="button", data-dismiss="modal", aria-label="Close")
                         span(aria-hidden="true") &times;
@@ -28,10 +27,34 @@ mixin changePersonalData
                     .form-group
                         label.col-sm-2.control-label(for="name") Name
                         .col-sm-10
-                            input#name.form-control(type="text", name="name", value=name)
+                            input#name.form-control(type="text", name="name", value=name, required)
                     .form-group
                         label.col-sm-2.control-label(for="email") Email
                         .col-sm-10
-                            input#email.form-control(type="email", name="email", value=email)
+                            input#email.form-control(type="email", name="email", value=email, required)
+                .modal-footer
+                    button.btn.btn-success(type="submit") Submit
+
+mixin changePassword
+    #change-password.modal.fade(tabindex="-1", role = "dialog")
+        .modal-dialog(role="document")
+            form.modal-content(action="/admin/profile/" + id + "/changeInfo", method="post")
+                .modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h2 Change password
+                .modal-body.form-horizontal
+                    .form-group
+                        label.col-sm-2.control-label(for="name") Old password
+                        .col-sm-10
+                            input#name.form-control(type="password", name="oldPassword", value=name, required)
+                    .form-group
+                        label.col-sm-2.control-label(for="email") New password
+                        .col-sm-10
+                            input#email.form-control(type="password", name="email", value=email, required)
+                    .form-group
+                        label.col-sm-2.control-label(for="email") Repeat new password
+                        .col-sm-10
+                            input#email.form-control(type="password", name="email", value=email, required)
                 .modal-footer
                     button.btn.btn-success(type="submit") Submit

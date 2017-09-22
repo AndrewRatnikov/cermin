@@ -131,26 +131,42 @@ const jsonResponse = (res, code, response) => {
 
 module.exports.uploadAvatar = function (req, res, next) {
     const id = req.params.id;
-    if (Object.keys(req.files).length === 0) return jsonResponse(res, 404, { error: 'No files were upload.' });
-    if (!req.files.uploadAvatar.type.match(/^image/)) return jsonResponse(res, 404, { error: 'Files must be images.' });
+    if (Object.keys(req.files).length === 0) return jsonResponse(res, 200, { error: 'No files were upload.' });
+    if (!req.files.uploadAvatar.type.match(/^image/)) return jsonResponse(res, 200, { error: 'Files must be images.' });
     fs.readFile(req.files.uploadAvatar.path, function (err, data) {
         const name = createHash(req.files.uploadAvatar.originalFilename);
         const newPath = process.cwd() + "/public/uploads/" + name;
         fs.writeFile(newPath, data, function (err) {
-            if (err)  return jsonResponse(res, 404, err);
+            if (err)  return jsonResponse(res, 200, err);
             User.findById(id).select('urlAvatar').exec(function (err, user) {
                 if (err) {
-                    return jsonResponse(res, 404, err);
+                    return jsonResponse(res, 200, err);
                 } else {
-                    const oldPath = process.cwd() + "/public/" + user.urlAvatar;
-                    fs.unlink(oldPath);
+                    if (user.urlAvatar) {
+                        const oldPath = process.cwd() + "/public/" + user.urlAvatar;
+                        fs.unlink(oldPath);
+                    }
                     user.urlAvatar = "/uploads/" + name;
                     user.save(function (err, user) {
-                        if (err) return jsonResponse(res, 404, err);
-                        jsonResponse(res, 201, { success: true });
+                        if (err) return jsonResponse(res, 200, err);
+                        jsonResponse(res, 200, { success: true });
                     });
                 }
             });
         });
     });
+};
+
+module.exports.changePersonalData = function (req, res, next) {
+  const userId = req.params.id;
+  const data = {
+      email: req.body.email.trim(),
+      name: req.body.name.trim()
+  };
+  if (!data.email || !data.name) return jsonResponse(res, 200, { error: 'All fields are required' });
+
+  User.findOneAndUpdate({ '_id': userId }, data, function(err, doc) {
+    if (err) return jsonResponse(res, 200, err);
+    return jsonResponse(res, 200, { success: true });
+  });
 };

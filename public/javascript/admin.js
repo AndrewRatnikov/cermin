@@ -9,12 +9,15 @@ $(function() {
             this.$uploadAvatarInput = $('#upload-avatar');
             this.$modalChangeAvatar = $('#change-avatar');
             this.$changeAvatarForm = this.$modalChangeAvatar.find('form');
+            this.$changePersonalDataPopup = $('#change-personal-data');
+            this.$changePersonalDataForm = this.$changePersonalDataPopup.find('form');
         },
         bindEvents: function () {
             this.$uploadAvatarInput.on('change', this.setValueToInput.bind(this));
             this.$uploadAvatarInput.on('click', this.delErrorBlock.bind(this));
             this.$modalChangeAvatar.on('hidden.bs.modal', this.clearInputValue.bind(this));
             this.$changeAvatarForm.on('submit', this.sendNewAvatar.bind(this));
+            this.$changePersonalDataForm.on('submit', this.sendPersonalData.bind(this));
         },
         delErrorBlock: function (event) {
             this.$changeAvatarForm.find('.alert').remove();
@@ -50,14 +53,22 @@ $(function() {
                 processData: false,
                 data: formData,
                 type: 'post',
-                success: function(){
-                    document.location.reload(true);
-                },
-                error: function (jqxhr) {
-                    const error = JSON.parse(jqxhr.responseText).error;
-                    const err = '<p class="alert alert-danger">' + error + '</p>';
+                success: function(result){
+                    if (result.success) return document.location.reload(true);
+                    const err = '<p class="alert alert-danger">' + result.error + '</p>';
                     modalBody.prepend(err);
                 }
+            });
+        },
+        sendPersonalData: function(event) {
+            event.preventDefault();
+            const url = this.$changePersonalDataForm.attr('action');
+            const data = this.$changePersonalDataForm.serialize();
+            const modalBody = this.$changePersonalDataForm.find('.modal-body');
+            $.post(url, data, function(result) {
+                if (result.success) return document.location.reload(true);
+                const err = '<p class="alert alert-danger">' + result.error + '</p>';
+                modalBody.prepend(err);
             });
         }
     };

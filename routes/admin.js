@@ -32,6 +32,8 @@ router.post('/profile/:id', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile
 router.post('/profile/:id/delpost/:postid', ctrlAdmin.isLogged, ctrlProfile.delPost);
 // upload user avatar
 router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.uploadAvatar);
+// change user info
+router.post('/profile/:id/changeInfo', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.changePersonalData);
 
 router.get('/', function (req, res, next) {
     res.redirect('/');

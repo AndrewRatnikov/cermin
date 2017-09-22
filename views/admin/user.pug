@@ -48,15 +48,5 @@ block content
                     p= post.label
                     form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
                         button(type="submit") Delete post
-    #alert-modal.modal.fade(tabindex="-1", role="dialog")
-        .modal-dialog(role="document")
-            .modal-content.alert.alert-danger
-                .modal-body
-                    .row
-                        button.close(type="button", data-dismiss="modal", aria-label="Close")
-                            span(aria-hidden="true") &times;
-                    .row
-                        h2 Error
-                        p Error
     +changeAvatar
     +changePersonalData(name, email)
