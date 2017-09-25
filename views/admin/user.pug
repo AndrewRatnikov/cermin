@@ -20,10 +20,7 @@ block content
                             button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#change-personal-data") Change personal data
                     .row.margin-bottom-10
                         .col-sm-12
-                            button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#alert-modal") Change password
-                    .row.margin-bottom-10
-                        .col-sm-12
-                            button.btn.btn-danger(type="button", data-toggle="modal", data-target="#alert-modal") Alert
+                            button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#change-password") Change password
         .col-md-9
             form(method="post", enctype="multipart/form-data")
                 h5 Add Post
@@ -49,4 +46,5 @@ block content
                     form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
                         button(type="submit") Delete post
     +changeAvatar
-    +changePersonalData(name, email)
+    +changePersonalData
+    +changePassword

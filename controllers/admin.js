@@ -31,7 +31,6 @@ module.exports.isLogged = (req, res, next) => {
 module.exports.getRegisterPage = function (req, res, next) {
     let err = req.flash('error');
     registerPage(req, res, err);
-    //res.render('admin/register', { title: 'Registration', error: err, hasErr: !!err });
 };
 
 module.exports.registerNewUser = function (req, res, next) {

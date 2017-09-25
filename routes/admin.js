@@ -34,6 +34,8 @@ router.post('/profile/:id/delpost/:postid', ctrlAdmin.isLogged, ctrlProfile.delP
 router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.uploadAvatar);
 // change user info
 router.post('/profile/:id/changeInfo', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.changePersonalData);
+// change user password
+router.post('/profile/:id/changePassword', ctrlAdmin.isLogged, ctrlProfile.changePassword);
 
 router.get('/', function (req, res, next) {
     res.redirect('/');
