@@ -22,29 +22,38 @@ block content
                         .col-sm-12
                             button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#change-password") Change password
         .col-md-9
-            form(method="post", enctype="multipart/form-data")
-                h5 Add Post
-                input(type="file", name="uploadPostPreview", required, multiple="multiple")
-                br
-                input(type="text", name="title", required, placeholder="Title")
-                br
-                input(type="text", name="label", required, placeholder="Label")
-                br
-                textarea(required, name="text" placeholder="Post text")
-                br
-                input(type="submit", value="Add")
-            each post in posts
-                hr
-                div
-                    h3= post.title
-                    each imgUrl in post.photoUrl
-                        .img-wrap
-                            img(src=imgUrl)
-                    p Added #{post.date}
-                    p= post.description
-                    p= post.label
-                    form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
-                        button(type="submit") Delete post
+            ul.nav.nav-tabs(role="tablist")
+                li.active(role="presentation")
+                    a(href="#posts", aria-controls="posts", role="tab", data-toggle="tab") Posts
+                li(role="presentation")
+                    a(href="#add-post", aria-controls="add-post", role="tab", data-toggle="tab") Add post
+            .tab-content
+                #posts.tab-pane.active(role="tabpanel")
+                    each post in posts
+                        hr
+                        div
+                            h3= post.title
+                            each imgUrl in post.photoUrl
+                                .img-wrap
+                                    img(src=imgUrl)
+                            p Added #{post.date}
+                            p= post.description
+                            p= post.label
+                            form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
+                                button(type="submit") Delete post
+                #add-post.tab-pane(role="tabpanel")
+                    form(method="post", enctype="multipart/form-data")
+                        h5 Add Post
+                        input(type="file", name="uploadPostPreview", required, multiple="multiple")
+                        br
+                        input(type="text", name="title", required, placeholder="Title")
+                        br
+                        input(type="text", name="label", required, placeholder="Label")
+                        br
+                        textarea(required, name="text" placeholder="Post text")
+                        br
+                        input(type="submit", value="Add")
+
     +changeAvatar
     +changePersonalData
     +changePassword
