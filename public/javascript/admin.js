@@ -16,6 +16,14 @@ $(function() {
             this.$oldPasswordInput = $('#old-password');
             this.$newPasswordInput = $('#new-password');
             this.$confirmPasswordInput = $('#confirm-new-password');
+            this.$addPostForm = $('#add-post').find('form');
+            this.$uploadPostPreviewInput = $('#upload-post-preview');
+            this.$imagesNamesInput = $('#image-names');
+            this.$postTitleInput= $('#post-title');
+            this.$postLabelInput= $('#post-label');
+            this.$postTextInput= $('#post-text');
+            this.$alertMessageInAddPost = $('#alert-message');
+            this.$closeAlertMessageInAddPost = $('#close-alert-message');
         },
         bindEvents: function () {
             this.$uploadAvatarInput.on('change', this.setValueToInput.bind(this));
@@ -24,6 +32,53 @@ $(function() {
             this.$changeAvatarForm.on('submit', this.sendNewAvatar.bind(this));
             this.$changePersonalDataForm.on('submit', this.sendPersonalData.bind(this));
             this.$changePasswordForm.on('submit', this.sendChangePassword.bind(this));
+            this.$uploadPostPreviewInput.on('change', this.setFilenames.bind(this));
+            this.$addPostForm.on('submit', this.addNewPost.bind(this));
+            this.$closeAlertMessageInAddPost.on('click', this.closeAlertMessageInAddPost.bind(this));
+        },
+        addNewPost: function (event) {
+            event.preventDefault();
+            const url = this.$addPostForm.attr('action');
+            const files = this.$uploadPostPreviewInput.prop('files');
+            const formData = new FormData();
+            $.each(files, (key, value) => {
+                formData.append('uploadPostPreview', value);
+            });
+            formData.append(this.$postTitleInput.attr('name'), this.$postTitleInput.val());
+            formData.append(this.$postLabelInput.attr('name'), this.$postLabelInput.val());
+            formData.append(this.$postTextInput.attr('name'), this.$postTextInput.val());
+            $.ajax({
+                url: url,
+                contentType: false,
+                processData: false,
+                data: formData,
+                type: 'post'
+            }).done(this.addNewPostHandler.bind(this));
+        },
+        addNewPostHandler: function(result) {
+            if (result.success) {
+                this.$alertMessageInAddPost.removeClass('hidden').find('.alert').addClass('alert-success').prepend(result.message);
+                this.$imagesNamesInput.val('');
+                this.$postTitleInput.val('');
+                this.$postLabelInput.val('');
+                this.$postTextInput.val('');
+            } else {
+                this.$alertMessageInAddPost.removeClass('hidden').find('.alert').addClass('alert-danger').prepend(result.error);
+            }
+        },
+        closeAlertMessageInAddPost: function () {
+            this.hideNewPostMessage();
+        },
+        hideNewPostMessage: function() {
+            this.$alertMessageInAddPost.addClass('hidden').find('.alert').removeClass('alert-danger alert-success').contents().filter(() => this.nodeType === 3).remove();
+        },
+        setFilenames: function (event) {
+            this.hideNewPostMessage();
+            const filenames = [];
+            $.each(this.$uploadPostPreviewInput.prop('files'), (index, element) => {
+                filenames.push(element.name);
+            });
+            this.$imagesNamesInput.val(filenames.join(', '));
         },
         delErrorBlock: function (event) {
             this.$changeAvatarForm.find('.alert').remove();
@@ -44,9 +99,6 @@ $(function() {
             const modalBody = this.$changeAvatarForm.find('.modal-body');
             if (!files.length) {
                 return this.resultHandler(modalBody, { error: 'No files were upload' });
-                // const err = '<p class="alert alert-danger">No files were upload</p>';
-                // modalBody.prepend(err);
-                // return;
             }
             const formData = new FormData();
             $.each(files, function(key, value) {
@@ -54,8 +106,6 @@ $(function() {
             });
             $.ajax({
                 url: url,
-                dataType: 'json',
-                cache: false,
                 contentType: false,
                 processData: false,
                 data: formData,

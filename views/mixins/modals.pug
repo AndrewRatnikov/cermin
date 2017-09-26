@@ -8,10 +8,10 @@ mixin changeAvatar
                     h2 Change avatar
                 .modal-body
                     .input-group
-                        label.input-group-btn.upload-avatar
+                        label.input-group-btn.upload-files
                             label.btn.btn-primary(for="upload-avatar") Browse
                             input#upload-avatar(type="file", name="uploadAvatar")
-                        input.form-control(type="text", readonly)
+                        input.form-control(type="text", disabled)
                 .modal-footer
                     button.btn.btn-success(type="submit") Submit
 

@@ -4,6 +4,10 @@ const crypto = require('crypto');
 const User = require('../model/user');
 const Post = require('../model/blogpost');
 
+const jsonResponse = (res, code, response) => {
+    res.status(code).json(response);
+};
+
 module.exports.getUserPage = function (req, res, next) {
     let error = req.flash('error');
     User.findOne({'_id': req.params.id}, function (err, user) {
@@ -19,6 +23,7 @@ module.exports.getUserPage = function (req, res, next) {
                     posts = posts.map((post) => {
                         const date = `${post.date.getDate()}.${post.date.getMonth()}.${post.date.getFullYear()}`;
                         return {
+                            _id: post._id,
                             photoUrl: post.photoUrl,
                             title: post.title,
                             description: post.description,
@@ -82,29 +87,28 @@ const savePost = (req, res, url) => {
     post.author = req.params.id;
     post.date = new Date();
     post.save(function (err, post) {
-        if (err) errHandler(req, res, err);
-        console.log(post);
-        res.redirect('back');
+        if (err) jsonResponse(res, 200, err);
+        jsonResponse(res, 200, { success: true, message: 'Post successfully added', post });
     });
 };
 
 module.exports.addPost = function (req, res, next) {
-    if (!req.files) return errHandler(req, res, 'No files were uploaded.');
+    if (!req.files) return jsonResponse(res, 200, {error: 'No files were uploaded.'});
     const file = req.files.uploadPostPreview;
     if (file.path) {
-        if (!file.type.match(/^image/)) return errHandler(req, res, 'Files must be images.');
+        if (!file.type.match(/^image/)) return jsonResponse(res, 200, {error: 'Files must be images.'});
         writePostImg(file)
             .then(results => savePost(req, res, results))
-            .catch(err => errHandler(req, res, err));
+            .catch(err => jsonResponse(res, 200, err));
     } else {
         let isImages = true;
         file.forEach(f => {
             if (!f.type.match(/^image/)) isImages = false;
         });
-        if (!isImages) return errHandler(req, res, 'Files must be images.');
+        if (!isImages) return jsonResponse(res, 200, {error: 'Files must be images.'});
         Promise.all(file.map(writePostImg))
             .then(results => savePost(req, res, results))
-            .catch(err => errHandler(req, res, err));
+            .catch(err => jsonResponse(res, 200, err));
     }
 };
 
@@ -123,10 +127,6 @@ module.exports.delPost = function (req, res, next) {
         }
         return res.redirect('back');
     });
-};
-
-const jsonResponse = (res, code, response) => {
-    res.status(code).json(response);
 };
 
 module.exports.uploadAvatar = function (req, res, next) {
