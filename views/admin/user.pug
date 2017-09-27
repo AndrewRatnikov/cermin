@@ -24,6 +24,10 @@ block content
                         .col-sm-12
                             button.btn.btn-primary.btn-sm(type="button", data-toggle="modal", data-target="#change-password") Change password
         .col-md-9.col-sm-12
+            if hasErr
+                .row
+                    .col-sm-12
+                        p.alert.alert-danger= error
             ul.nav.nav-tabs(role="tablist")
                 li.active(role="presentation")
                     a(href="#posts", aria-controls="posts", role="tab", data-toggle="tab") Posts
@@ -32,17 +36,23 @@ block content
             .tab-content
                 #posts.tab-pane.active(role="tabpanel")
                     each post in posts
-                        hr
-                        div
-                            h3= post.title
-                            each imgUrl in post.photoUrl
-                                .img-wrap
-                                    img(src=imgUrl)
-                            p Added #{post.date}
-                            p= post.description
-                            p= post.label
-                            form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
-                                button(type="submit") Delete post
+                        .post.panel.panel-primary.margin-top-50(data-postid=post._id)
+                            .panel-heading
+                                h3= post.title
+                            .panel-body
+                                .post__img-wrap
+                                    each imgUrl in post.photoUrl
+                                        img.img-thumbnail.post__preview(src=imgUrl, alt="Preview")
+                            .panel-footer
+                                p.pull-right Added&nbsp;
+                                    span.badge= post.date
+                                p Labels:&nbsp;
+                                    span.label.label-primary= post.label
+                                p.well.well-sm= post.description
+                                //form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
+                                p.post__btns
+                                    button.btn.btn-warning(type="button") Edit post
+                                    button.btn.btn-danger(type="button") Delete post
                 #add-post.tab-pane(role="tabpanel")
                     .row.margin-top-50
                         .col-sm-12.col-md-8

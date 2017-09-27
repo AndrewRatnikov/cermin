@@ -4,6 +4,7 @@ $(function() {
         init: function() {
             this.cacheDom();
             this.bindEvents();
+            this.render();
         },
         cacheDom: function() {
             this.$uploadAvatarInput = $('#upload-avatar');
@@ -24,6 +25,7 @@ $(function() {
             this.$postTextInput= $('#post-text');
             this.$alertMessageInAddPost = $('#alert-message');
             this.$closeAlertMessageInAddPost = $('#close-alert-message');
+            this.$imgWrap = $('.post__img-wrap');
         },
         bindEvents: function () {
             this.$uploadAvatarInput.on('change', this.setValueToInput.bind(this));
@@ -35,6 +37,13 @@ $(function() {
             this.$uploadPostPreviewInput.on('change', this.setFilenames.bind(this));
             this.$addPostForm.on('submit', this.addNewPost.bind(this));
             this.$closeAlertMessageInAddPost.on('click', this.closeAlertMessageInAddPost.bind(this));
+        },
+        render: function () {
+            this.$imgWrap.slick({
+                infinite: true,
+                speed: 300,
+                variableWidth: true
+            });
         },
         addNewPost: function (event) {
             event.preventDefault();

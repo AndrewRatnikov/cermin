@@ -1,3 +1,7 @@
+//  ----  VARS  ----
+$main_border_color: #ddd;
+$shadow_075: rgba(0,0,0,.075);
+
 .login-form {
     position: absolute;
     top: 50%;
@@ -24,4 +28,39 @@
 
 .margin-top-50 {
     margin-top: 50px;
+}
+
+.post__img-wrap {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.post__preview {
+    max-height: 400px;
+    + .post__preview {
+        margin-left: 20px;
+    }
+}
+
+.post__btns {
+    button + button {
+        margin-left: 10px;
+    }
+}
+
+.slick-prev, .slick-next {
+    width: 40px;
+    height: 40px;
+    &:before {
+        font-size: 40px;
+        color: $main_border_color;
+    }
+}
+
+.slick-prev {
+    left: -45px;
+}
+
+.slick-next {
+    right: -45px;
 }
