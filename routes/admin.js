@@ -13,11 +13,9 @@ router.post('/login', ctrlAdmin.loginUser, function (req, res, next) {
     res.redirect(`profile/${id}`);
 });
 // go to register page
-router.get('/register', ctrlAdmin.getRegisterPage);
+router.get('/register', ctrlAdmin.isLogged, ctrlAdmin.getRegisterPage);
 // register new user
-router.post('/register', ctrlAdmin.registerNewUser, function (req, res, next) {
-    res.redirect('/');
-});
+router.post('/register', ctrlAdmin.isLogged, ctrlAdmin.registerNewUser);
 // logout from account
 router.get('/logout', ctrlAdmin.logout);
 // go to delete user page
