@@ -51,8 +51,8 @@ block content
                                 p.well.well-sm= post.description
                                 //form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
                                 p.post__btns
-                                    button.btn.btn-warning(type="button") Edit post
-                                    button.btn.btn-danger(type="button") Delete post
+                                    button.btn.btn-warning.edit-post(type="button") Edit post
+                                    button.btn.btn-danger.del-post(type="button") Delete post
                 #add-post.tab-pane(role="tabpanel")
                     .row.margin-top-50
                         .col-sm-12.col-md-8

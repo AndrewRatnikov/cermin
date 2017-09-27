@@ -29,7 +29,7 @@ router.get('/profile/:id', ctrlAdmin.isLogged, ctrlProfile.getUserPage);
 // get new post
 router.post('/profile/:id', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.addPost);
 // delete post
-router.post('/profile/:id/delpost/:postid', ctrlAdmin.isLogged, ctrlProfile.delPost);
+router.post('/delpost/:postid', ctrlAdmin.isLogged, ctrlProfile.delPost);
 // upload user avatar
 router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.uploadAvatar);
 // change user info

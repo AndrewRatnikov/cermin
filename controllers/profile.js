@@ -77,11 +77,6 @@ const writePostImg = (file) => new Promise(function (resolve, reject) {
     });
 });
 
-const errHandler = (req, res, err) => {
-    req.flash('error', err);
-    return res.redirect('back');
-};
-
 const savePost = (req, res, url) => {
     const post = new Post();
     post.title = req.body.title;
@@ -119,7 +114,7 @@ module.exports.addPost = function (req, res, next) {
 module.exports.delPost = function (req, res, next) {
     const postId = req.params.postid;
     Post.findOneAndRemove({'_id': postId}, function (err, doc, post) {
-        if (err) return errHandler(req, res, err);
+        if (err) return jsonResponse(res, 200, err);
         if (doc) {
             doc.photoUrl.forEach(url => {
                 const urlPath = `${process.cwd()}/public/${url}`;
@@ -129,7 +124,7 @@ module.exports.delPost = function (req, res, next) {
                 });
             });
         }
-        return res.redirect('back');
+        return jsonResponse(res, 200, { success: true });
     });
 };
 

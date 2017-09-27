@@ -26,6 +26,8 @@ $(function() {
             this.$alertMessageInAddPost = $('#alert-message');
             this.$closeAlertMessageInAddPost = $('#close-alert-message');
             this.$imgWrap = $('.post__img-wrap');
+            this.$delPost = $('.del-post');
+            this.$editPost = $('.edit-post');
         },
         bindEvents: function () {
             this.$uploadAvatarInput.on('change', this.setValueToInput.bind(this));
@@ -37,6 +39,8 @@ $(function() {
             this.$uploadPostPreviewInput.on('change', this.setFilenames.bind(this));
             this.$addPostForm.on('submit', this.addNewPost.bind(this));
             this.$closeAlertMessageInAddPost.on('click', this.closeAlertMessageInAddPost.bind(this));
+            this.$delPost.on('click', this.deletePost.bind(this));
+            this.$editPost.on('click', this.editPost.bind(this));
         },
         render: function () {
             this.$imgWrap.slick({
@@ -44,6 +48,23 @@ $(function() {
                 speed: 300,
                 variableWidth: true
             });
+        },
+        deletePost: function (event) {
+            const $post = $(event.target).parents('.post');
+            $post.find('.alert').remove();
+            const postId = $post.data('postid');
+            const url = `/admin/delpost/${postId}`;
+            $.post(url, function(result) {
+                if (result.success) {
+                    $post.remove();
+                } else {
+                    $post.find('.post__btns').before(`<p class="alert alert-danger">${result.error}</p>`);
+                }
+            });
+        },
+        editPost: function (event) {
+        //      TODO: add edit post
+            console.log('edit');
         },
         addNewPost: function (event) {
             event.preventDefault();
