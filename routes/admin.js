@@ -22,10 +22,12 @@ router.get('/logout', ctrlAdmin.logout);
 router.get('/deluser', ctrlAdmin.isLogged, ctrlAdmin.getDelPage);
 // delete user
 router.post('/deluser', ctrlAdmin.isLogged, ctrlAdmin.deleteUser);
-// go to profile page
-router.get('/profile/:id', ctrlAdmin.isLogged, ctrlProfile.getUserPage);
+// go to posts page
+router.get('/profile/:id/posts', ctrlAdmin.isLogged, ctrlProfile.getPostsPage);
+// go to add posts page
+router.get('/profile/:id/addpost', ctrlAdmin.isLogged, ctrlProfile.getAddPostPage);
 // get new post
-router.post('/profile/:id', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.addPost);
+router.post('/profile/:id/addpost', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.addPost);
 // delete post
 router.post('/delpost/:postid', ctrlAdmin.isLogged, ctrlProfile.delPost);
 // upload user avatar

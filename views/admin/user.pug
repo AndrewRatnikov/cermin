@@ -29,61 +29,12 @@ block content
                     .col-sm-12
                         p.alert.alert-danger= error
             ul.nav.nav-tabs(role="tablist")
-                li.active(role="presentation")
-                    a(href="#posts", aria-controls="posts", role="tab", data-toggle="tab") Posts
-                li(role="presentation")
-                    a(href="#add-post", aria-controls="add-post", role="tab", data-toggle="tab") Add post
-            .tab-content
-                #posts.tab-pane.active(role="tabpanel")
-                    each post in posts
-                        .post.panel.panel-primary.margin-top-50(data-postid=post._id)
-                            .panel-heading
-                                h3= post.title
-                            .panel-body
-                                .post__img-wrap
-                                    each imgUrl in post.photoUrl
-                                        img.img-thumbnail.post__preview(src=imgUrl, alt="Preview")
-                            .panel-footer
-                                p.pull-right Added&nbsp;
-                                    span.badge= post.date
-                                p Labels:&nbsp;
-                                    span.label.label-primary= post.label
-                                p.well.well-sm= post.description
-                                //form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
-                                p.post__btns
-                                    button.btn.btn-warning.edit-post(type="button") Edit post
-                                    button.btn.btn-danger.del-post(type="button") Delete post
-                #add-post.tab-pane(role="tabpanel")
-                    .row.margin-top-50
-                        .col-sm-12.col-md-8
-                            form.form-horizontal(action="/admin/profile/" + id, method="post", enctype="multipart/form-data")
-                                #alert-message.form-group.hidden
-                                    .col-sm-9.col-sm-offset-3
-                                        p.alert
-                                            button#close-alert-message.close(type="button") &times;
-                                .form-group
-                                    label.col-sm-3.control-label Upload images
-                                    .col-sm-9
-                                        .input-group
-                                            label.input-group-btn.upload-files
-                                                label.btn.btn-primary(for="upload-post-preview") Browse
-                                                input#upload-post-preview(type="file", name="uploadPostPreview", required, multiple="multiple")
-                                            input#image-names.form-control(type="text", disabled)
-                                .form-group
-                                    label.col-sm-3.control-label(for="post-title") Title
-                                    .col-sm-9
-                                        input#post-title.form-control(type="text", name="title", required)
-                                .form-group
-                                    label.col-sm-3.control-label(for="post-label") Label
-                                    .col-sm-9
-                                        input#post-label.form-control(type="text", name="label", required)
-                                .form-group
-                                    label.col-sm-3.control-label(for="post-text") Text
-                                    .col-sm-9
-                                        textarea#post-text.form-control(required, name="text", rows=5)
-                                .form-group
-                                    .col-sm-9.col-sm-offset-3
-                                        button.btn.btn-success(type="submit") Add post
+                li(role="presentation", class=posts ? "active" : "")
+                    a(href="/admin/profile/" + id + "/posts") Posts
+                li(role="presentation", class=posts ? "" : "active")
+                    a(href="/admin/profile/" + id + "/addpost") Add post
+
+            block posts
 
     +changeAvatar
     +changePersonalData

@@ -1,0 +1,21 @@
+extends user
+
+block posts
+    each post in posts
+        .post.panel.panel-primary.margin-top-50(data-postid=post._id)
+            .panel-heading
+                h3= post.title
+            .panel-body
+                .post__img-wrap
+                    each imgUrl in post.photoUrl
+                        img.img-thumbnail.post__preview(src=imgUrl, alt="Preview")
+            .panel-footer
+                p.pull-right Added&nbsp;
+                    span.badge= post.date
+                p Labels:&nbsp;
+                    span.label.label-primary= post.label
+                p.well.well-sm= post.description
+                //form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
+                p.post__btns
+                    button.btn.btn-warning.edit-post(type="button") Edit post
+                    button.btn.btn-danger.del-post(type="button") Delete post

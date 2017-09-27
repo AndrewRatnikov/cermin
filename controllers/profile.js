@@ -12,45 +12,52 @@ const addZeroToDate = (num) => {
     return `${num}`.length === 1 ? `0${num}` : `${num}`;
 };
 
-module.exports.getUserPage = function (req, res, next) {
+module.exports.getPostsPage = function (req, res, next) {
     let error = req.flash('error');
-    User.findOne({'_id': req.params.id}, function (err, user) {
+    Post.find({}, function (err, posts) {
         if (err) {
             req.flash('error', err);
             res.redirect('/admin/login');
         } else {
-            Post.find({}, function (err, posts) {
-                if (err) {
-                    req.flash('error', err);
-                    res.redirect('/admin/login');
-                } else {
-                    posts = posts.map((post) => {
-                        const date = `${addZeroToDate(post.date.getDate())}.${addZeroToDate(post.date.getMonth())}.${post.date.getFullYear()}`;
-                        return {
-                            _id: post._id,
-                            photoUrl: post.photoUrl,
-                            title: post.title,
-                            description: post.description,
-                            author: post.author,
-                            label: post.label,
-                            date: date
-                        };
-                    });
-                    res.render('admin/user', {
-                        posts: posts.reverse(),
-                        title: 'Profile',
-                        email: user.email,
-                        id: user._id,
-                        name: user.name,
-                        error: error,
-                        hasErr: !!error.length,
-                        urlAvatar: user.urlAvatar,
-                        isLogged: req.isAuthenticated()
-                    });
-                }
+            posts = posts.map((post) => {
+                const date = `${addZeroToDate(post.date.getDate())}.${addZeroToDate(post.date.getMonth())}.${post.date.getFullYear()}`;
+                return {
+                    _id: post._id,
+                    photoUrl: post.photoUrl,
+                    title: post.title,
+                    description: post.description,
+                    author: post.author,
+                    label: post.label,
+                    date: date
+                };
+            });
+            res.render('admin/posts', {
+                posts: posts.reverse(),
+                title: 'Profile',
+                email: req.user.email,
+                id: req.user._id,
+                name: req.user.name,
+                error: error,
+                hasErr: !!error.length,
+                urlAvatar: req.user.urlAvatar,
+                isLogged: req.isAuthenticated()
             });
         }
     });
+};
+
+module.exports.getAddPostPage = function (req, res, next) {
+    let error = req.flash('error') || '';
+    res.render('admin/add_post', {
+        title: 'Profile',
+        email: req.user.email,
+        id: req.user._id,
+        name: req.user.name,
+        urlAvatar: req.user.urlAvatar,
+        error: error,
+        hasErr: !!error.length,
+        isLogged: req.isAuthenticated()
+    })
 };
 
 const createHash = (name) => {

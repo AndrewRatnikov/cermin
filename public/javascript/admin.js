@@ -17,7 +17,7 @@ $(function() {
             this.$oldPasswordInput = $('#old-password');
             this.$newPasswordInput = $('#new-password');
             this.$confirmPasswordInput = $('#confirm-new-password');
-            this.$addPostForm = $('#add-post').find('form');
+            this.$addPostForm = $('#add-post');
             this.$uploadPostPreviewInput = $('#upload-post-preview');
             this.$imagesNamesInput = $('#image-names');
             this.$postTitleInput= $('#post-title');

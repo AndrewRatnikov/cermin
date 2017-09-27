@@ -14,10 +14,12 @@ mixin navigation
                             span.caret
                         ul.dropdown-menu
                             li
-                                a(href="/admin/profile/" + id) Profile
+                                a(href="/admin/profile/" + id + "/posts") Posts list
+                            li
+                                a(href="/admin/profile/" + id + "/addpost") Add post
                             li
                                 a(href="/admin/logout") Logout
-                    li
+                    li(class=title === "Registration" ? "active" : "")
                         a(href="/admin/register") Register user
-                    li
+                    li(class=title === "Delete user" ? "active" : "")
                         a(href="/admin/deluser") Delete user
