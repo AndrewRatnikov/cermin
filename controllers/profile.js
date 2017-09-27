@@ -8,6 +8,10 @@ const jsonResponse = (res, code, response) => {
     res.status(code).json(response);
 };
 
+const addZeroToDate = (num) => {
+    return `${num}`.length === 1 ? `0${num}` : `${num}`;
+};
+
 module.exports.getUserPage = function (req, res, next) {
     let error = req.flash('error');
     User.findOne({'_id': req.params.id}, function (err, user) {
@@ -21,7 +25,7 @@ module.exports.getUserPage = function (req, res, next) {
                     res.redirect('/admin/login');
                 } else {
                     posts = posts.map((post) => {
-                        const date = `${post.date.getDate()}.${post.date.getMonth()}.${post.date.getFullYear()}`;
+                        const date = `${addZeroToDate(post.date.getDate())}.${addZeroToDate(post.date.getMonth())}.${post.date.getFullYear()}`;
                         return {
                             _id: post._id,
                             photoUrl: post.photoUrl,
