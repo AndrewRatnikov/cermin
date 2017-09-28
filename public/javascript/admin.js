@@ -1,10 +1,9 @@
 $(function() {
 
-    const uploadAvatar = {
+    const profileActions = {
         init: function() {
             this.cacheDom();
             this.bindEvents();
-            this.render();
         },
         cacheDom: function() {
             this.$uploadAvatarInput = $('#upload-avatar');
@@ -17,17 +16,6 @@ $(function() {
             this.$oldPasswordInput = $('#old-password');
             this.$newPasswordInput = $('#new-password');
             this.$confirmPasswordInput = $('#confirm-new-password');
-            this.$addPostForm = $('#add-post');
-            this.$uploadPostPreviewInput = $('#upload-post-preview');
-            this.$imagesNamesInput = $('#image-names');
-            this.$postTitleInput= $('#post-title');
-            this.$postLabelInput= $('#post-label');
-            this.$postTextInput= $('#post-text');
-            this.$alertMessageInAddPost = $('#alert-message');
-            this.$closeAlertMessageInAddPost = $('#close-alert-message');
-            this.$imgWrap = $('.post__img-wrap');
-            this.$delPost = $('.del-post');
-            this.$editPost = $('.edit-post');
         },
         bindEvents: function () {
             this.$uploadAvatarInput.on('change', this.setValueToInput.bind(this));
@@ -36,79 +24,6 @@ $(function() {
             this.$changeAvatarForm.on('submit', this.sendNewAvatar.bind(this));
             this.$changePersonalDataForm.on('submit', this.sendPersonalData.bind(this));
             this.$changePasswordForm.on('submit', this.sendChangePassword.bind(this));
-            this.$uploadPostPreviewInput.on('change', this.setFilenames.bind(this));
-            this.$addPostForm.on('submit', this.addNewPost.bind(this));
-            this.$closeAlertMessageInAddPost.on('click', this.closeAlertMessageInAddPost.bind(this));
-            this.$delPost.on('click', this.deletePost.bind(this));
-            this.$editPost.on('click', this.editPost.bind(this));
-        },
-        render: function () {
-            this.$imgWrap.slick({
-                infinite: true,
-                speed: 300,
-                variableWidth: true
-            });
-        },
-        deletePost: function (event) {
-            const $post = $(event.target).parents('.post');
-            $post.find('.alert').remove();
-            const postId = $post.data('postid');
-            const url = `/admin/delpost/${postId}`;
-            $.post(url, function(result) {
-                if (result.success) {
-                    $post.remove();
-                } else {
-                    $post.find('.post__btns').before(`<p class="alert alert-danger">${result.error}</p>`);
-                }
-            });
-        },
-        editPost: function (event) {
-        //      TODO: add edit post
-            console.log('edit');
-        },
-        addNewPost: function (event) {
-            event.preventDefault();
-            const url = this.$addPostForm.attr('action');
-            const files = this.$uploadPostPreviewInput.prop('files');
-            const formData = new FormData();
-            $.each(files, (key, value) => {
-                formData.append('uploadPostPreview', value);
-            });
-            formData.append(this.$postTitleInput.attr('name'), this.$postTitleInput.val());
-            formData.append(this.$postLabelInput.attr('name'), this.$postLabelInput.val());
-            formData.append(this.$postTextInput.attr('name'), this.$postTextInput.val());
-            $.ajax({
-                url: url,
-                contentType: false,
-                processData: false,
-                data: formData,
-                type: 'post'
-            }).done(this.addNewPostHandler.bind(this));
-        },
-        addNewPostHandler: function(result) {
-            if (result.success) {
-                this.$alertMessageInAddPost.removeClass('hidden').find('.alert').addClass('alert-success').prepend(result.message);
-                this.$imagesNamesInput.val('');
-                this.$postTitleInput.val('');
-                this.$postLabelInput.val('');
-                this.$postTextInput.val('');
-            } else {
-                this.$alertMessageInAddPost.removeClass('hidden').find('.alert').addClass('alert-danger').prepend(result.error);
-            }
-        },
-        closeAlertMessageInAddPost: function () {
-            this.hideNewPostMessage();
-        },
-        hideNewPostMessage: function() {
-            this.$alertMessageInAddPost.addClass('hidden').find('.alert').removeClass('alert-danger alert-success').contents().filter(() => this.nodeType === 3).remove();
-        },
-        setFilenames: function (event) {
-            this.hideNewPostMessage();
-            const filenames = [];
-            $.each(this.$uploadPostPreviewInput.prop('files'), (index, element) => {
-                filenames.push(element.name);
-            });
-            this.$imagesNamesInput.val(filenames.join(', '));
         },
         delErrorBlock: function (event) {
             this.$changeAvatarForm.find('.alert').remove();
@@ -168,6 +83,115 @@ $(function() {
             modalBody.prepend(err);
         }
     };
-    uploadAvatar.init();
+    profileActions.init();
+
+    const addPostActions = {
+        init: function() {
+            this.cacheDom();
+            this.bindEvents();
+        },
+        cacheDom: function () {
+            this.$addPostForm = $('#add-post');
+            this.$uploadPostPreviewInput = $('#upload-post-preview');
+            this.$imagesNamesInput = $('#image-names');
+            this.$postTitleInput= $('#post-title');
+            this.$postLabelInput= $('#post-label');
+            this.$postTextInput= $('#post-text');
+            this.$alertMessageInAddPost = $('#alert-message');
+            this.$closeAlertMessageInAddPost = $('#close-alert-message');
+        },
+        bindEvents: function () {
+            this.$uploadPostPreviewInput.on('change', this.setFilenames.bind(this));
+            this.$addPostForm.on('submit', this.addNewPost.bind(this));
+            this.$closeAlertMessageInAddPost.on('click', this.closeAlertMessageInAddPost.bind(this));
+        },
+        setFilenames: function (event) {
+            this.hideNewPostMessage();
+            const filenames = [];
+            $.each(this.$uploadPostPreviewInput.prop('files'), (index, element) => {
+                filenames.push(element.name);
+            });
+            this.$imagesNamesInput.val(filenames.join(', '));
+        },
+        addNewPost: function (event) {
+            event.preventDefault();
+            const url = this.$addPostForm.attr('action');
+            const files = this.$uploadPostPreviewInput.prop('files');
+            const formData = new FormData();
+            $.each(files, (key, value) => {
+                formData.append('uploadPostPreview', value);
+            });
+            formData.append(this.$postTitleInput.attr('name'), this.$postTitleInput.val());
+            formData.append(this.$postLabelInput.attr('name'), this.$postLabelInput.val());
+            formData.append(this.$postTextInput.attr('name'), this.$postTextInput.val());
+            $.ajax({
+                url: url,
+                contentType: false,
+                processData: false,
+                data: formData,
+                type: 'post'
+            }).done(this.addNewPostHandler.bind(this));
+        },
+        addNewPostHandler: function(result) {
+            if (result.success) {
+                this.$alertMessageInAddPost.removeClass('hidden').find('.alert').addClass('alert-success').prepend(result.message);
+                this.$imagesNamesInput.val('');
+                this.$postTitleInput.val('');
+                this.$postLabelInput.val('');
+                this.$postTextInput.val('');
+            } else {
+                this.$alertMessageInAddPost.removeClass('hidden').find('.alert').addClass('alert-danger').prepend(result.error);
+            }
+        },
+        closeAlertMessageInAddPost: function () {
+            this.hideNewPostMessage();
+        },
+        hideNewPostMessage: function() {
+            this.$alertMessageInAddPost.addClass('hidden').find('.alert').removeClass('alert-danger alert-success').contents().filter(() => this.nodeType === 3).remove();
+        },
+    };
+    addPostActions.init();
+
+    const postsActions = {
+        init: function() {
+            this.cacheDom();
+            this.bindEvents();
+            this.render();
+        },
+        cacheDom: function () {
+            this.$imgWrap = $('.post__img-wrap');
+            this.$delPost = $('.del-post');
+            this.$editPost = $('.edit-post');
+        },
+        bindEvents: function () {
+            this.$delPost.on('click', this.deletePost.bind(this));
+            this.$editPost.on('click', this.editPost.bind(this));
+        },
+        render: function () {
+            this.$imgWrap.slick({
+                infinite: true,
+                speed: 300,
+                variableWidth: true
+            });
+        },
+        deletePost: function (event) {
+            const $post = $(event.target).parents('.post');
+            $post.find('.alert').remove();
+            const postId = $post.data('postid');
+            const url = `/admin/delpost/${postId}`;
+            $.post(url, function(result) {
+                if (result.success) {
+                    $post.hide('slow', () => $post.remove());
+                } else {
+                    $post.find('.post__btns').before(`<p class="alert alert-danger">${result.error}</p>`);
+                }
+            });
+        },
+        editPost: function (event) {
+            //      TODO: add edit post
+            console.log('edit');
+        },
+    };
+    postsActions.init();
 
 });
