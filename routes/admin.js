@@ -28,6 +28,8 @@ router.get('/profile/:id/posts', ctrlAdmin.isLogged, ctrlProfile.getPostsPage);
 router.get('/profile/:id/addpost', ctrlAdmin.isLogged, ctrlProfile.getAddPostPage);
 // get new post
 router.post('/profile/:id/addpost', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.addPost);
+// add new label
+router.post('/updateLabel', ctrlAdmin.isLogged, ctrlProfile.updateLabel);
 // delete post
 router.post('/delpost/:postid', ctrlAdmin.isLogged, ctrlProfile.delPost);
 // upload user avatar

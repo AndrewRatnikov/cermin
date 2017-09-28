@@ -14,8 +14,7 @@ block posts
                     span.badge= post.date
                 p Labels:&nbsp;
                     span.label.label-primary= post.label
-                p.well.well-sm= post.description
-                //form(action="/admin/profile/" + id + "/delpost/" + post._id, method="post")
+                pre.well.well-sm= post.description
                 p.post__btns
                     button.btn.btn-warning.edit-post(type="button") Edit post
                     button.btn.btn-danger.del-post(type="button") Delete post

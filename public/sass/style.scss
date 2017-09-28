@@ -30,6 +30,10 @@ $shadow_075: rgba(0,0,0,.075);
     margin-top: 50px;
 }
 
+.margin-top-25 {
+    margin-top: 25px;
+}
+
 .post__img-wrap {
     margin-left: 50px;
     margin-right: 50px;
@@ -63,4 +67,8 @@ $shadow_075: rgba(0,0,0,.075);
 
 .slick-next {
     right: -45px;
+}
+
+.label-btn {
+    min-width: 100px;
 }

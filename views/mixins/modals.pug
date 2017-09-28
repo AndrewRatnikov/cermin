@@ -58,3 +58,24 @@ mixin changePassword
                             input#confirm-new-password.form-control(type="password", name="confirmNewPassword", required)
                 .modal-footer
                     button.btn.btn-success(type="submit") Submit
+
+mixin updateLabel
+    #update-label.modal.fade(tabindex="-1", role = "dialog")
+        .modal-dialog(role="document")
+            .modal-content
+                .modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h2 Change label
+                .modal-body
+                    .input-group
+                        select#del-label.form-control(name="delLabel")
+                            option(value="", selected) Choose label
+                            each label in labels
+                                option(value=label.label)= label.label
+                        span.input-group-btn
+                            button#del-label-btn.btn.btn-danger.label-btn(type="button") Delete label
+                    .input-group.margin-top-25.margin-bottom-10
+                        input#add-label.form-control(name="addLabel", type="text")
+                        span.input-group-btn
+                            button#add-label-btn.btn.btn-success.label-btn(type="button") Add label

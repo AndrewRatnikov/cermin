@@ -1,5 +1,7 @@
 extends user
 
+include ../mixins/modals
+
 block posts
     .row.margin-top-50
         .col-sm-12.col-md-8
@@ -23,7 +25,13 @@ block posts
                 .form-group
                     label.col-sm-3.control-label(for="post-label") Label
                     .col-sm-9
-                        input#post-label.form-control(type="text", name="label", required)
+                        .input-group
+                            select#post-label.form-control(name="label", required)
+                                option(value="", selected) Choose label
+                                each label in labels
+                                    option(value=label.label)= label.label
+                            span.input-group-btn
+                                button.btn.btn-default(type="button", data-toggle="modal", data-target="#update-label") Change labels
                 .form-group
                     label.col-sm-3.control-label(for="post-text") Text
                     .col-sm-9
@@ -31,3 +39,5 @@ block posts
                 .form-group
                     .col-sm-9.col-sm-offset-3
                         button.btn.btn-success(type="submit") Add post
+
+    +updateLabel

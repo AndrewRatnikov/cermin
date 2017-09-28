@@ -3,6 +3,7 @@ const crypto = require('crypto');
 
 const User = require('../model/user');
 const Post = require('../model/blogpost');
+const Label = require('../model/label');
 
 const jsonResponse = (res, code, response) => {
     res.status(code).json(response);
@@ -48,16 +49,19 @@ module.exports.getPostsPage = function (req, res, next) {
 
 module.exports.getAddPostPage = function (req, res, next) {
     let error = req.flash('error') || '';
-    res.render('admin/add_post', {
-        title: 'Profile',
-        email: req.user.email,
-        id: req.user._id,
-        name: req.user.name,
-        urlAvatar: req.user.urlAvatar,
-        error: error,
-        hasErr: !!error.length,
-        isLogged: req.isAuthenticated()
-    })
+    Label.find({}, function (err, labels) {
+        res.render('admin/add_post', {
+            title: 'Profile',
+            email: req.user.email,
+            id: req.user._id,
+            name: req.user.name,
+            urlAvatar: req.user.urlAvatar,
+            labels: labels,
+            error: error,
+            hasErr: !!error.length,
+            isLogged: req.isAuthenticated()
+        });
+    });
 };
 
 const createHash = (name) => {
@@ -194,4 +198,40 @@ module.exports.changePassword = function (req, res, next) {
             return jsonResponse(res, 200, { success: true })
         });
     });
+};
+
+const findLabel = label => new Promise(function(resolve, reject) {
+    Label.findOne({ 'label': label }, function (err, lab) {
+        if (err) reject(err);
+        if (lab) reject('Label is already exist');
+        resolve(label);
+    });
+});
+
+module.exports.updateLabel = function (req, res, next) {
+    const label = req.body.label.trim();
+    if (!label) return jsonResponse(res, 200, { error: 'Field is empty' });
+    if (req.body.new === 'true') {
+        findLabel(label)
+            .then(label => {
+                const newLabel = new Label();
+                newLabel.label = label;
+                newLabel.save(function(err) {
+                    if (err) return jsonResponse(res, 200, { error: err });
+                    return jsonResponse(res, 200, { success: true, label: label, added: true });
+                });
+            })
+            .catch(err => jsonResponse(res, 200, { error: err }))
+        // const newLabel = new Label();
+        // newLabel.label = label;
+        // newLabel.save(function(err) {
+        //     if (err) return jsonResponse(res, 200, { error: err });
+        //     return jsonResponse(res, 200, { success: true, label: label, added: true });
+        // });
+    } else {
+        Label.findOneAndRemove({ 'label': label }, function(err) {
+            if (err) return jsonResponse(res, 200, { error: err });
+            return jsonResponse(res, 200, { success: true, label: label, added: false })
+        });
+    }
 };
