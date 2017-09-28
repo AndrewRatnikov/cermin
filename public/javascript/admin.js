@@ -115,9 +115,13 @@ $(function() {
             this.$addLabelBtn.on('click', this.addLabel.bind(this));
         },
         addLabel: function (event) {
+            const label = this.$addLabelInput.val().trim();
+            if (!label) this.prependAlertDangerBlock(this.$updateLabelModal.find('.modal-body'), 'Previously fill input field');
             this.postHandler({ label: this.$addLabelInput.val(), new: true }, 'Label is added');
         },
         delLabel: function (event) {
+            const label = this.$addLabelInput.val().trim();
+            if (!label) this.prependAlertDangerBlock(this.$updateLabelModal.find('.modal-body'), 'Previously choose label');
             this.postHandler({ label: this.$delLabelInput.val(), new: false }, 'Label is deleted');
         },
         postHandler: function (data, msg) {
@@ -136,8 +140,11 @@ $(function() {
                     this.$postLabelInput.find(`[value="${result.label}"]`).remove();
                 }
             } else {
-                $modalBody.prepend(`<p class="alert alert-danger">${result.error}</p>`)
+                this.prependAlertDangerBlock($modalBody, result.error);
             }
+        },
+        prependAlertDangerBlock: function (block, msg) {
+            block.prepend(`<p class="alert alert-danger">${msg}</p>`)
         },
         clearModalErr: function () {
             this.$updateLabelModal.find('.alert').remove();

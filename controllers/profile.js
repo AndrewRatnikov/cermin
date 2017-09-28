@@ -222,12 +222,6 @@ module.exports.updateLabel = function (req, res, next) {
                 });
             })
             .catch(err => jsonResponse(res, 200, { error: err }))
-        // const newLabel = new Label();
-        // newLabel.label = label;
-        // newLabel.save(function(err) {
-        //     if (err) return jsonResponse(res, 200, { error: err });
-        //     return jsonResponse(res, 200, { success: true, label: label, added: true });
-        // });
     } else {
         Label.findOneAndRemove({ 'label': label }, function(err) {
             if (err) return jsonResponse(res, 200, { error: err });
