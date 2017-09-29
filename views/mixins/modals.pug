@@ -79,3 +79,17 @@ mixin updateLabel
                         input#add-label.form-control(name="addLabel", type="text")
                         span.input-group-btn
                             button#add-label-btn.btn.btn-success.label-btn(type="button") Add label
+
+mixin updatePost
+    #update-post.modal.fade(tabindex="-1", role = "dialog")
+        .modal-dialog.modal-lg(role="document")
+            form.modal-content(method="post", enctype="multipart/form-data")
+                .modal-header
+                    button.close(type="button", data-dismiss="modal", aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h2 Update post
+                .modal-body
+                    .loader
+                .modal-footer
+                    button.btn.btn-success(type="submit") Update
+                    button.btn.btn-default(type="button", data-dismiss="modal") Close

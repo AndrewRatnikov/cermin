@@ -1,0 +1,45 @@
+.form-horizontal
+    .form-group
+        .col-sm-9.col-sm-offset-3
+            #post-preview.carousel.slide(data-ride="carousel")
+                ol.carousel-indicators
+                    - for (var i = 0; i < post.photoUrl.length; i++)
+                        li(data-target="#post-preview", data-slide-to=i, class=i == 0 ? "active" : "")
+                .carousel-inner(role="listbox")
+                    each img, count in post.photoUrl
+                        .item.img-wrap(class=count == 0 ? "active" : "")
+                            img(src=img, alt="Preview")
+                            .carousel-caption
+                                button.btn.btn-danger.btn-sm(type="button") Delete image
+                a.left.carousel-control(href="#post-preview", role="button", data-slide="prev")
+                    span.glyphicon.glyphicon-chevron-left(aria-hidden="true")
+                    span.sr-only Previous
+                a.right.carousel-control(href="#post-preview", role="button", data-slide="next")
+                    span.glyphicon.glyphicon-chevron-right(aria-hidden="true")
+                    span.sr-only Next
+    .form-group
+        label.col-sm-3.control-label Upload images
+        .col-sm-9
+            .input-group
+                label.input-group-btn.upload-files
+                    label.btn.btn-primary(for="upload-post-preview") Browse
+                    input#upload-post-preview(type="file", name="uploadPostPreview", multiple="multiple")
+                input#image-names.form-control(type="text", disabled)
+    .form-group
+        label.col-sm-3.control-label(for="post-title") Title
+        .col-sm-9
+            input#post-title.form-control(type="text", name="title", required, value=post.title)
+    .form-group
+        label.col-sm-3.control-label(for="post-label") Label
+        .col-sm-9
+            .input-group
+                select#post-label.form-control(name="label", required)
+                    option(value="", selected) Choose label
+                    each label in labels
+                        option(value=label.label, selected=post.label == label.label ? true : false)= label.label
+                span.input-group-btn
+                    button.btn.btn-default(type="button", data-toggle="modal", data-target="#update-label") Change labels
+    .form-group
+        label.col-sm-3.control-label(for="post-text") Text
+        .col-sm-9
+            textarea#post-text.form-control(required, name="text", rows=5)= post.description

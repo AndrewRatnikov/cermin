@@ -1,5 +1,7 @@
 extends user
 
+include ../mixins/modals
+
 block posts
     each post in posts
         .post.panel.panel-primary.margin-top-50(data-postid=post._id)
@@ -16,5 +18,8 @@ block posts
                     span.label.label-primary= post.label
                 pre.well.well-sm= post.description
                 p.post__btns
-                    button.btn.btn-warning.edit-post(type="button") Edit post
+                    button.btn.btn-warning.edit-post(type="button", data-toggle="modal", data-target="#update-post") Edit post
                     button.btn.btn-danger.del-post(type="button") Delete post
+
+    +updatePost
+    +updateLabel

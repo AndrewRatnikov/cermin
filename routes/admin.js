@@ -38,6 +38,8 @@ router.post('/profile/:id/uploadavatar', ctrlAdmin.isLogged, multipartMiddleware
 router.post('/profile/:id/changeInfo', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.changePersonalData);
 // change user password
 router.post('/profile/:id/changePassword', ctrlAdmin.isLogged, ctrlProfile.changePassword);
+// send update post modal
+router.post('/profile/updatePostModal', ctrlAdmin.isLogged, ctrlProfile.sendUpdatePostModal);
 
 router.get('/', function (req, res, next) {
     res.redirect('/');

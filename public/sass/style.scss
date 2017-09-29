@@ -1,6 +1,7 @@
 //  ----  VARS  ----
 $main_border_color: #ddd;
 $shadow_075: rgba(0,0,0,.075);
+$main-bg-color: #337ab7;
 
 .input-form {
     position: absolute;
@@ -71,4 +72,40 @@ $shadow_075: rgba(0,0,0,.075);
 
 .label-btn {
     min-width: 100px;
+}
+
+.loader {
+    width: 100px;
+    height: 100px;
+    margin: 20px auto;
+    border: 15px solid $main-border-color;
+    border-radius: 100%;
+    border-top-color: $main-bg-color;
+    border-bottom-color: $main-bg-color;
+    animation-name: spin;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.img-wrap {
+    img {
+        height: 250px !important;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .carousel-caption {
+        top: 0;
+        bottom: inherit;
+        padding-top: 0;
+    }
 }

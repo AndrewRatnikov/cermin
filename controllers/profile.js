@@ -13,27 +13,39 @@ const addZeroToDate = (num) => {
     return `${num}`.length === 1 ? `0${num}` : `${num}`;
 };
 
+const getLabels = () => new Promise((resolve, reject) => {
+    Label.find({}, function (err, labels) {
+        if (err) reject(err);
+        resolve(labels);
+    });
+});
+
+const getPosts = () => new Promise((resolve, reject) => {
+    Post.find({}, function (err, posts) {
+        if (err) reject(err);
+        let newPosts = posts.map((post) => {
+            const date = `${addZeroToDate(post.date.getDate())}.${addZeroToDate(post.date.getMonth())}.${post.date.getFullYear()}`;
+            return {
+                _id: post._id,
+                photoUrl: post.photoUrl,
+                title: post.title,
+                description: post.description,
+                author: post.author,
+                label: post.label,
+                date: date
+            };
+        });
+        resolve(newPosts.reverse());
+    });
+});
+
 module.exports.getPostsPage = function (req, res, next) {
     let error = req.flash('error');
-    Post.find({}, function (err, posts) {
-        if (err) {
-            req.flash('error', err);
-            res.redirect('/admin/login');
-        } else {
-            posts = posts.map((post) => {
-                const date = `${addZeroToDate(post.date.getDate())}.${addZeroToDate(post.date.getMonth())}.${post.date.getFullYear()}`;
-                return {
-                    _id: post._id,
-                    photoUrl: post.photoUrl,
-                    title: post.title,
-                    description: post.description,
-                    author: post.author,
-                    label: post.label,
-                    date: date
-                };
-            });
+    Promise.all([getLabels(), getPosts()])
+        .then(result => {
             res.render('admin/posts', {
-                posts: posts.reverse(),
+                labels: result[0],
+                posts: result[1],
                 title: 'Profile',
                 email: req.user.email,
                 id: req.user._id,
@@ -43,13 +55,15 @@ module.exports.getPostsPage = function (req, res, next) {
                 urlAvatar: req.user.urlAvatar,
                 isLogged: req.isAuthenticated()
             });
-        }
-    });
+        }, err => {
+            req.flash('error', err);
+            res.redirect('/admin/login');
+        });
 };
 
 module.exports.getAddPostPage = function (req, res, next) {
     let error = req.flash('error') || '';
-    Label.find({}, function (err, labels) {
+    return getLabels().then(labels => {
         res.render('admin/add_post', {
             title: 'Profile',
             email: req.user.email,
@@ -58,6 +72,18 @@ module.exports.getAddPostPage = function (req, res, next) {
             urlAvatar: req.user.urlAvatar,
             labels: labels,
             error: error,
+            hasErr: !!error.length,
+            isLogged: req.isAuthenticated()
+        });
+    }).catch(err => {
+        res.render('admin/add_post', {
+            title: 'Profile',
+            email: req.user.email,
+            id: req.user._id,
+            name: req.user.name,
+            urlAvatar: req.user.urlAvatar,
+            labels: [],
+            error: err,
             hasErr: !!error.length,
             isLogged: req.isAuthenticated()
         });
@@ -72,7 +98,7 @@ const createHash = (name) => {
     return `${fileName}.${hash}${fileExtension}`;
 };
 
-const writePostImg = (file) => new Promise(function (resolve, reject) {
+const writePostImg = (file) => new Promise((resolve, reject) => {
     const name = createHash(file.originalFilename);
     const newPath = process.cwd() + "/public/uploads/" + name;
     fs.readFile(file.path, (err, data) => {
@@ -200,7 +226,7 @@ module.exports.changePassword = function (req, res, next) {
     });
 };
 
-const findLabel = label => new Promise(function(resolve, reject) {
+const findLabel = label => new Promise((resolve, reject) => {
     Label.findOne({ 'label': label }, function (err, lab) {
         if (err) reject(err);
         if (lab) reject('Label is already exist');
@@ -228,4 +254,22 @@ module.exports.updateLabel = function (req, res, next) {
             return jsonResponse(res, 200, { success: true, label: label, added: false })
         });
     }
+};
+
+const getOnePost = id => new Promise((resolve, reject) => {
+    Post.findOne({ '_id': id }, (err, post) => {
+        if (err) return reject(err);
+        if (!post) return reject('Post not find');
+        resolve(post);
+    });
+});
+
+module.exports.sendUpdatePostModal = function (req, res, next) {
+    const postId = req.body.postId;
+    Promise.all([getOnePost(postId), getLabels()])
+        .then(values => {
+            res.render('partial/update_post_modal', { post: values[0], labels: values[1] }, function(err, html) {
+                jsonResponse(res, 200, { success: true, html: html });
+            }, err => jsonResponse(res, 200, { error: err }));
+        });
 };
