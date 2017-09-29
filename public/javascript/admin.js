@@ -99,57 +99,11 @@ $(function() {
             this.$postTextInput= $('#post-text');
             this.$alertMessageInAddPost = $('#alert-message');
             this.$closeAlertMessageInAddPost = $('#close-alert-message');
-            this.$changeLabels = $('[data-target="#update-label"]');
-            this.$updateLabelModal = $('#update-label');
-            this.$delLabelInput = $('#del-label');
-            this.$delLabelBtn = $('#del-label-btn');
-            this.$addLabelInput = $('#add-label');
-            this.$addLabelBtn = $('#add-label-btn');
         },
         bindEvents: function () {
             this.$uploadPostPreviewInput.on('change', this.setFilenames.bind(this));
             this.$addPostForm.on('submit', this.addNewPost.bind(this));
             this.$closeAlertMessageInAddPost.on('click', this.closeAlertMessageInAddPost.bind(this));
-            this.$changeLabels.on('click', this.clearModalErr.bind(this));
-            this.$delLabelBtn.on('click', this.delLabel.bind(this));
-            this.$addLabelBtn.on('click', this.addLabel.bind(this));
-        },
-        addLabel: function (event) {
-            const label = this.$addLabelInput.val().trim();
-            if (!label) this.prependAlertDangerBlock(this.$updateLabelModal.find('.modal-body'), 'Previously fill input field');
-            this.postHandler({ label: this.$addLabelInput.val(), new: true }, 'Label is added');
-        },
-        delLabel: function (event) {
-            const label = this.$addLabelInput.val().trim();
-            if (!label) this.prependAlertDangerBlock(this.$updateLabelModal.find('.modal-body'), 'Previously choose label');
-            this.postHandler({ label: this.$delLabelInput.val(), new: false }, 'Label is deleted');
-        },
-        postHandler: function (data, msg) {
-            this.clearModalErr();
-            $.post('/admin/updateLabel', data, this.resultHandler.bind(this, msg));
-        },
-        resultHandler: function (msg, result) {
-            const $modalBody = this.$updateLabelModal.find('.modal-body');
-            if (result.success) {
-                $modalBody.prepend(`<p class="alert alert-success">${msg}</p>`);
-                if (result.added) {
-                    this.$delLabelInput.append(`<option value="${result.label}">${result.label}</option>`);
-                    this.$postLabelInput.append(`<option value="${result.label}">${result.label}</option>`);
-                } else {
-                    this.$delLabelInput.find(`[value="${result.label}"]`).remove();
-                    this.$postLabelInput.find(`[value="${result.label}"]`).remove();
-                }
-            } else {
-                this.prependAlertDangerBlock($modalBody, result.error);
-            }
-        },
-        prependAlertDangerBlock: function (block, msg) {
-            block.prepend(`<p class="alert alert-danger">${msg}</p>`)
-        },
-        clearModalErr: function () {
-            this.$updateLabelModal.find('.alert').remove();
-            this.$delLabelInput.val('');
-            this.$addLabelInput.val('');
         },
         setFilenames: function (event) {
             this.hideNewPostMessage();
@@ -208,10 +162,20 @@ $(function() {
             this.$imgWrap = $('.post__img-wrap');
             this.$delPost = $('.del-post');
             this.$editPost = $('.edit-post');
+            this.$updatePostModal = $('#update-post');
+            this.$updatePostForm = this.$updatePostModal.find('form');
+        },
+        cacheModalDom: function () {
+            this.$deleteImgBtns = $('#post-preview').find('.btn-sm');
+            this.$uploadPostPreview = $('#upload-post-preview');
+            this.$postTitle = $('#post-title');
+            this.$postLabel = $('#post-label');
+            this.$postText = $('#post-text');
         },
         bindEvents: function () {
             this.$delPost.on('click', this.deletePost.bind(this));
-            this.$editPost.on('click', this.editPost.bind(this));
+            this.$editPost.on('click', this.getModalEditPost.bind(this));
+            this.$updatePostForm.on('submit', this.editPost.bind(this));
         },
         render: function () {
             this.$imgWrap.slick({
@@ -233,11 +197,83 @@ $(function() {
                 }
             });
         },
-        editPost: function (event) {
-            //      TODO: add edit post
-            console.log('edit');
+        getModalEditPost: function (event) {
+            const $post = $(event.target).parents('.post');
+            $post.find('.alert').remove();
+            const postId = $post.data('postid');
+            $.post('/admin/profile/updatePostModal', { postId: postId }, function(result) {
+                if (result.success) {
+                    this.$updatePostForm.find('.modal-body').html(result.html);
+                    this.$updatePostForm.data('postid', postId);
+                    this.cacheModalDom();
+                } else {
+                    $post.find('.post__btns').before(`<p class="alert alert-danger">${result.error}</p>`);
+                }
+            }.bind(this));
         },
+        editPost: function (event) {
+            event.preventDefault();
+
+        }
     };
     postsActions.init();
+
+    const changeLabelModalActions = {
+        init: function () {
+            this.cacheDom();
+            this.bindEvents();
+        },
+        cacheDom: function () {
+            this.$postLabelInput= $('#post-label');
+            this.$updateLabelModal = $('#update-label');
+            this.$delLabelInput = $('#del-label');
+            this.$delLabelBtn = $('#del-label-btn');
+            this.$addLabelInput = $('#add-label');
+            this.$addLabelBtn = $('#add-label-btn');
+        },
+        bindEvents: function () {
+            this.$updateLabelModal.on('show.bs.modal', this.clearModalErr.bind(this));
+            this.$delLabelBtn.on('click', this.delLabel.bind(this));
+            this.$addLabelBtn.on('click', this.addLabel.bind(this));
+        },
+        delLabel: function (event) {
+            const label = this.$delLabelInput.val().trim();
+            if (!label) this.prependAlertDangerBlock(this.$updateLabelModal.find('.modal-body'), 'Previously choose label');
+            this.postHandler({ label: label, new: false }, 'Label is deleted');
+        },
+        addLabel: function (event) {
+            const label = this.$addLabelInput.val().trim();
+            if (!label) this.prependAlertDangerBlock(this.$updateLabelModal.find('.modal-body'), 'Previously fill input field');
+            this.postHandler({ label: this.$addLabelInput.val(), new: true }, 'Label is added');
+        },
+        postHandler: function (data, msg) {
+            this.clearModalErr();
+            $.post('/admin/updateLabel', data, this.resultHandler.bind(this, msg));
+        },
+        prependAlertDangerBlock: function (block, msg) {
+            block.prepend(`<p class="alert alert-danger">${msg}</p>`)
+        },
+        clearModalErr: function () {
+            this.$updateLabelModal.find('.alert').remove();
+            this.$delLabelInput.val('');
+            this.$addLabelInput.val('');
+        },
+        resultHandler: function (msg, result) {
+            const $modalBody = this.$updateLabelModal.find('.modal-body');
+            if (result.success) {
+                $modalBody.prepend(`<p class="alert alert-success">${msg}</p>`);
+                if (result.added) {
+                    this.$delLabelInput.append(`<option value="${result.label}">${result.label}</option>`);
+                    this.$postLabelInput.append(`<option value="${result.label}">${result.label}</option>`);
+                } else {
+                    this.$delLabelInput.find(`[value="${result.label}"]`).remove();
+                    this.$postLabelInput.find(`[value="${result.label}"]`).remove();
+                }
+            } else {
+                this.prependAlertDangerBlock($modalBody, result.error);
+            }
+        },
+    };
+    changeLabelModalActions.init()
 
 });
