@@ -15,7 +15,7 @@ const addZeroToDate = (num) => {
 
 const getLabels = () => new Promise((resolve, reject) => {
     Label.find({}, function (err, labels) {
-        if (err) reject(err);
+        if (err) reject({ error: err });
         resolve(labels);
     });
 });
@@ -103,11 +103,11 @@ const writePostImg = (file) => new Promise((resolve, reject) => {
     const newPath = process.cwd() + "/public/uploads/" + name;
     fs.readFile(file.path, (err, data) => {
         if (err) {
-            reject('Can not read file');
+            reject({ error: 'Can not read file' });
         }
         fs.writeFile(newPath, data, (err) => {
             if (err) {
-                reject('Upload error');
+                reject({ error: 'Upload error' });
             }
             resolve("/uploads/" + name);
         });

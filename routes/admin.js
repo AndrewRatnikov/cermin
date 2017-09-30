@@ -10,7 +10,7 @@ router.get('/login', ctrlAdmin.getLoginPage);
 
 router.post('/login', ctrlAdmin.loginUser, function (req, res, next) {
     const id = req.session.passport.user;
-    res.redirect(`profile/${id}`);
+    res.redirect(`profile/${id}/posts`);
 });
 // go to register page
 router.get('/register', ctrlAdmin.isLogged, ctrlAdmin.getRegisterPage);
