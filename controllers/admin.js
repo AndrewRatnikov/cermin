@@ -58,6 +58,7 @@ module.exports.registerNewUser = function (req, res, next) {
 
 module.exports.getLoginPage = function (req, res, next) {
     let err = req.flash('error');
+    if (req.isAuthenticated()) res.redirect(`/admin/profile/${req.user._id}/posts`);
     res.render('admin/form', {
         title: 'Login',
         error: err,
