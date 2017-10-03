@@ -96,7 +96,7 @@ $(function() {
             this.$imagesNamesInput = $('#image-names');
             this.$postTitleInput= $('#post-title');
             this.$postLabelInput= $('#post-label');
-            this.$postTextInput= $('#post-text');
+            this.$$postTextInput= $('#post-text');
             this.$alertMessageInAddPost = $('#alert-message');
             this.$closeAlertMessageInAddPost = $('#close-alert-message');
         },
@@ -123,7 +123,7 @@ $(function() {
             });
             formData.append(this.$postTitleInput.attr('name'), this.$postTitleInput.val());
             formData.append(this.$postLabelInput.attr('name'), this.$postLabelInput.val());
-            formData.append(this.$postTextInput.attr('name'), this.$postTextInput.val());
+            formData.append(this.$$postTextInput.attr('name'), this.$$postTextInput.val());
             $.ajax({
                 url: url,
                 contentType: false,
@@ -138,7 +138,7 @@ $(function() {
                 this.$imagesNamesInput.val('');
                 this.$postTitleInput.val('');
                 this.$postLabelInput.val('');
-                this.$postTextInput.val('');
+                this.$$postTextInput.val('');
             } else {
                 this.$alertMessageInAddPost.removeClass('hidden').find('.alert').addClass('alert-danger').prepend(result.error);
             }
@@ -166,11 +166,11 @@ $(function() {
             this.$updatePostForm = this.$updatePostModal.find('form');
             this.$imagesNamesInput = $('#image-names');
             this.$uploadPostPreview = $('#upload-post-preview');
-            this.uploadedImg = $('.img-wrap');
-            this.delImgBtn = this.uploadedImg.find('.btn');
-            this.postTittle = $('#post-title');
-            this.postLabel = $('#post-label');
-            this.postText = $('#post-text');
+            this.$uploadedImg = $('.img-wrap');
+            this.$delImgBtn = this.$uploadedImg.find('.btn');
+            this.$postTittle = $('#post-title');
+            this.$postLabel = $('#post-label');
+            this.$postText = $('#post-text');
         },
         bindEvents: function () {
             this.$delPost.on('click', this.deletePost.bind(this));
@@ -179,7 +179,7 @@ $(function() {
         },
         bindModalEvents: function () {
             this.$uploadPostPreview.on('change', this.setFilenames.bind(this));
-            this.delImgBtn.on('click', this.onDeleteImg.bind(this));
+            this.$delImgBtn.on('click', this.onDeleteImg.bind(this));
         },
         render: function () {
             this.$imgWrap.slick({
@@ -244,13 +244,14 @@ $(function() {
         },
         editPost: function (event) {
             event.preventDefault();
+            this.$updatePostForm.find('.alert').remove();
             const data = new FormData();
             const postId = this.$updatePostForm.data('postid');
             $.each(this.$uploadPostPreview.prop('files'), function(key, element) {
                 data.append('uploadPostPreview', element);
             });
             const leavedFiles = [];
-            this.uploadedImg.each((index, element) => {
+            this.$uploadedImg.each((index, element) => {
                 if ( !$(element).find('img').data('deleted') ) leavedFiles.push($(element).find('img').attr('src'));
             });
             const authorEnd = window.location.pathname.lastIndexOf('/');
@@ -259,9 +260,9 @@ $(function() {
             data.append('author', author);
             data.append('leavedImg', leavedFiles);
             data.append('postId', postId);
-            data.append('title', this.postTittle.val());
-            data.append('label', this.postLabel.val());
-            data.append('text', this.postText.val());
+            data.append('title', this.$postTittle.val());
+            data.append('label', this.$postLabel.val());
+            data.append('text', this.$postText.val());
             $.ajax({
                 url: '/admin/profile/updatePost',
                 contentType: false,
@@ -269,7 +270,10 @@ $(function() {
                 type: 'post',
                 data: data
             }).done((result) => {
-
+                if (result.success) document.location.reload(true);
+                else {
+                    this.$updatePostForm.find('.modal-body').prepend(`<p class="alert alert-danger">${result.error}</p>`);
+                }
             });
         }
     };
