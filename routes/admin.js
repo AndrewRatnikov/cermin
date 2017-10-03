@@ -40,6 +40,8 @@ router.post('/profile/:id/changeInfo', ctrlAdmin.isLogged, multipartMiddleware, 
 router.post('/profile/:id/changePassword', ctrlAdmin.isLogged, ctrlProfile.changePassword);
 // send update post modal
 router.post('/profile/updatePostModal', ctrlAdmin.isLogged, ctrlProfile.sendUpdatePostModal);
+// update post
+router.post('/profile/updatePost', ctrlAdmin.isLogged, multipartMiddleware, ctrlProfile.updatePost);
 
 router.get('/', function (req, res, next) {
     res.redirect('/');

@@ -8,8 +8,10 @@
                 .carousel-inner(role="listbox")
                     each img, count in post.photoUrl
                         .item.img-wrap(class=count == 0 ? "active" : "")
-                            img(src=img, alt="Preview")
+                            img(src=img, alt="Preview", data-deleted="false")
                             .carousel-caption
+                                p.alert.alert-warning(style="display: none") Deleted &nbsp;
+                                    button.btn.btn-danger.btn-sm(type="button") Cancel
                                 button.btn.btn-danger.btn-sm(type="button") Delete image
                 a.left.carousel-control(href="#post-preview", role="button", data-slide="prev")
                     span.glyphicon.glyphicon-chevron-left(aria-hidden="true")

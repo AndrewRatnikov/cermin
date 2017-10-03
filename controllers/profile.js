@@ -273,3 +273,29 @@ module.exports.sendUpdatePostModal = function (req, res, next) {
             }, err => jsonResponse(res, 200, { error: err }));
         });
 };
+
+const updateOnePost = (id, post) => new Promise((resolve, reject) => {
+    Post.findOneAndUpdate({ '_id': id }, post, function(err, doc) {
+        if (err) reject(err);
+        resolve(doc);
+    });
+});
+
+module.exports.updatePost = function (req, res, next) {
+    const postId = req.body.postId;
+    const files = req.files.uploadPostPreview || [];
+    Promise.all(files.map(writePostImg))
+        .then(result => {
+            const post = {
+                date: new Date(),
+                author: req.body.author,
+                description: req.body.text,
+                label: req.body.label,
+                title: req.body.title,
+                photoUrl: req.body.leavedImg.split(',').concat(result)
+            };
+            return updateOnePost(postId, post);
+        }, err => jsonResponse(res, 200, { error: err }))
+        .then(r => jsonResponse(res, 200, { success: true, message: 'Post was updated', post: r }))
+        .catch(err => jsonResponse(res, 200, { error: err }));
+};

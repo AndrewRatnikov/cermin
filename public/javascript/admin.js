@@ -164,18 +164,22 @@ $(function() {
             this.$editPost = $('.edit-post');
             this.$updatePostModal = $('#update-post');
             this.$updatePostForm = this.$updatePostModal.find('form');
-        },
-        cacheModalDom: function () {
-            this.$deleteImgBtns = $('#post-preview').find('.btn-sm');
+            this.$imagesNamesInput = $('#image-names');
             this.$uploadPostPreview = $('#upload-post-preview');
-            this.$postTitle = $('#post-title');
-            this.$postLabel = $('#post-label');
-            this.$postText = $('#post-text');
+            this.uploadedImg = $('.img-wrap');
+            this.delImgBtn = this.uploadedImg.find('.btn');
+            this.postTittle = $('#post-title');
+            this.postLabel = $('#post-label');
+            this.postText = $('#post-text');
         },
         bindEvents: function () {
             this.$delPost.on('click', this.deletePost.bind(this));
             this.$editPost.on('click', this.getModalEditPost.bind(this));
             this.$updatePostForm.on('submit', this.editPost.bind(this));
+        },
+        bindModalEvents: function () {
+            this.$uploadPostPreview.on('change', this.setFilenames.bind(this));
+            this.delImgBtn.on('click', this.onDeleteImg.bind(this));
         },
         render: function () {
             this.$imgWrap.slick({
@@ -183,6 +187,32 @@ $(function() {
                 speed: 300,
                 variableWidth: true
             });
+        },
+        setFilenames: function (event) {
+            const filenames = [];
+            $.each(this.$uploadPostPreview.prop('files'), (index, element) => {
+                filenames.push(element.name);
+            });
+            this.$imagesNamesInput.val(filenames.join(', '));
+        },
+        onDeleteImg: function (event) {
+            const btn = $(event.target);
+            const imgWrap = btn.parents('.img-wrap');
+            const img = imgWrap.find('img');
+            const alert = imgWrap.find('.alert');
+            let imgIsDel;
+            if (img.data('deleted') === 'true') {
+                imgIsDel = 'false';
+                imgWrap.find('.alert').hide('fast', () => {
+                    alert.next().show();
+                });
+            }  else {
+                imgIsDel = 'true';
+                btn.hide('fast', () => {
+                    alert.show();
+                });
+            };
+            img.data('deleted', imgIsDel);
         },
         deletePost: function (event) {
             const $post = $(event.target).parents('.post');
@@ -205,7 +235,8 @@ $(function() {
                 if (result.success) {
                     this.$updatePostForm.find('.modal-body').html(result.html);
                     this.$updatePostForm.data('postid', postId);
-                    this.cacheModalDom();
+                    this.cacheDom();
+                    this.bindModalEvents();
                 } else {
                     $post.find('.post__btns').before(`<p class="alert alert-danger">${result.error}</p>`);
                 }
@@ -213,7 +244,33 @@ $(function() {
         },
         editPost: function (event) {
             event.preventDefault();
+            const data = new FormData();
+            const postId = this.$updatePostForm.data('postid');
+            $.each(this.$uploadPostPreview.prop('files'), function(key, element) {
+                data.append('uploadPostPreview', element);
+            });
+            const leavedFiles = [];
+            this.uploadedImg.each((index, element) => {
+                if ( !$(element).find('img').data('deleted') ) leavedFiles.push($(element).find('img').attr('src'));
+            });
+            const authorEnd = window.location.pathname.lastIndexOf('/');
+            const authorStart = window.location.pathname.lastIndexOf('/', authorEnd - 1);
+            const author = window.location.pathname.substring(authorStart + 1, authorEnd);
+            data.append('author', author);
+            data.append('leavedImg', leavedFiles);
+            data.append('postId', postId);
+            data.append('title', this.postTittle.val());
+            data.append('label', this.postLabel.val());
+            data.append('text', this.postText.val());
+            $.ajax({
+                url: '/admin/profile/updatePost',
+                contentType: false,
+                processData: false,
+                type: 'post',
+                data: data
+            }).done((result) => {
 
+            });
         }
     };
     postsActions.init();
@@ -247,13 +304,14 @@ $(function() {
             this.postHandler({ label: this.$addLabelInput.val(), new: true }, 'Label is added');
         },
         postHandler: function (data, msg) {
-            this.clearModalErr();
             $.post('/admin/updateLabel', data, this.resultHandler.bind(this, msg));
+            this.clearModalErr();
         },
         prependAlertDangerBlock: function (block, msg) {
             block.prepend(`<p class="alert alert-danger">${msg}</p>`)
         },
         clearModalErr: function () {
+            this.cacheDom();
             this.$updateLabelModal.find('.alert').remove();
             this.$delLabelInput.val('');
             this.$addLabelInput.val('');
